@@ -1,0 +1,109 @@
+╔══════════════════════════════════════════════════════════════════╗
+║      ESP32-S3 RADAR TROUBLESHOOTING - QUICK REFERENCE           ║
+╚══════════════════════════════════════════════════════════════════╝
+
+## ⚠️ PROBLEM: NO RADAR DATA
+
+I've identified the issue - your radar uses DUAL PROTOCOLS and the
+code wasn't detecting both modes properly.
+
+## ✅ SOLUTION DEPLOYED
+
+New code on F:\code.py now:
+• Auto-detects BOTH protocol modes (Basic & Advanced)
+• Shows protocol status on OLED and NeoPixel
+• Prints debug info to serial every 5 seconds
+
+## 🎯 WHAT TO CHECK NOW
+
+### 1. Look at NeoPixel LED:
+   🟡 Yellow = Searching (no data yet)
+   🟢 Green  = Protocol detected, working!
+   🔴 Red    = Targets detected!
+
+### 2. Look at OLED Display (top-left):
+   "M314-?" = Still searching
+   "M314-B" = Basic mode detected ✓
+   "M314-A" = Advanced mode detected ✓
+
+### 3. Check Serial Monitor (115200 baud):
+   Should show every 5 seconds:
+   "Status: 15000 bytes/5s, 30 frames, Mode: BASIC" ✓
+   
+   If shows:
+   "Status: 0 bytes/5s, 0 frames, Mode: None" ✗
+   → See wiring check below!
+
+## 🔌 WIRING DOUBLE-CHECK
+
+HLK-LD2450        →  ESP32-S3 ProS3
+────────────────     ─────────────────
+TX (Yellow wire)  →  IO44 (RX pin)
+RX (Green wire)   →  IO43 (TX pin)
+VCC (Red wire)    →  5V
+GND (Black wire)  →  GND
+
+### Common Mistakes:
+❌ TX/RX swapped (most common!)
+❌ Using 3.3V instead of 5V
+❌ GND not connected
+❌ Wrong GPIO pins
+
+## 🔧 QUICK FIXES
+
+### Fix 1: Still seeing yellow LED?
+Physical wiring issue. Try swapping TX/RX wires.
+
+### Fix 2: Want pure diagnostic?
+```powershell
+Copy-Item F:\radar_diagnostic.py F:\code.py -Force
+```
+This will show detailed byte-level info.
+
+### Fix 3: Restore your original code?
+```powershell
+Copy-Item F:\code.py.working F:\code.py -Force
+```
+
+## 📊 EXPECTED BEHAVIOR (When Working)
+
+1. Device boots → Yellow LED (searching)
+2. Radar detected → Green LED + "M314-B" or "M314-A"
+3. Wave hand → Red LED + blips on screen
+4. Serial shows: "B-T1: 2.50m" with distance
+
+## 🎮 TEST PROCEDURE
+
+1. Power on / reset device
+2. Wait 5 seconds
+3. Check NeoPixel color
+4. Check OLED for "M314-B" or "M314-A"
+5. Wave hand 1-3 meters from radar
+6. Should see blips and Red LED
+
+## 📝 CURRENT FILE VERSIONS
+
+F:\code.py                 ← ACTIVE (dual-protocol, just deployed)
+F:\code_alien_style.py     ← Single protocol version
+F:\radar_diagnostic.py     ← Hardware test tool
+F:\code.py.working         ← Your original working code
+F:\TROUBLESHOOTING.md      ← Full troubleshooting guide
+
+## 🚀 THE DIFFERENCE
+
+OLD CODE:
+• Only looked for Basic mode (0xAA 0xFF)
+• Failed silently if radar was in Advanced mode
+
+NEW CODE:
+• Tries BOTH protocols automatically
+• Shows which one is detected
+• Better error reporting
+• Same Alien aesthetic!
+
+═══════════════════════════════════════════════════════════════════
+
+Your device should auto-restart in a few seconds.
+Watch the NeoPixel change from Yellow → Green when it detects the radar!
+
+If still having issues, open TROUBLESHOOTING.md for detailed steps.

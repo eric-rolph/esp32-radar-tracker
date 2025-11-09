@@ -1,0 +1,78 @@
+# ESP32 Radar Tracker - Git Ignore
+
+# ========================================
+# Python
+# ========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.pyc
+venv/
+env/
+ENV/
+.venv
+
+# ========================================
+# Arduino / PlatformIO
+# ========================================
+.pio/
+.vscode/
+.pioenvs
+.piolibdeps
+.clang_complete
+.gcc-flags.json
+*.elf
+*.bin
+*.hex
+
+# ========================================
+# CircuitPython
+# ========================================
+.Trashes
+._*
+.metadata_never_index
+.fseventsd
+boot_out.txt
+
+# ========================================
+# System Files
+# ========================================
+.DS_Store
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# ========================================
+# IDE
+# ========================================
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+
+# ========================================
+# Backup Files
+# ========================================
+*.bak
+*.backup
+Backup_*/
+*.zip
+
+# ========================================
+# Serial Port Config (user-specific)
+# ========================================
+serial_config.py
+com_port.txt
+
+# ========================================
+# Temporary Files
+# ========================================
+*.tmp
+*.temp
+tmp/
+temp/

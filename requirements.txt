@@ -1,0 +1,2 @@
+# Python dependencies for utilities
+pyserial>=3.5

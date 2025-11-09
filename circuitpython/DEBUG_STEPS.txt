@@ -1,0 +1,212 @@
+╔══════════════════════════════════════════════════════════════╗
+║          🔍 STEP-BY-STEP DEBUGGING GUIDE                     ║
+╚══════════════════════════════════════════════════════════════╝
+
+Current Status: Code not working - Let's find out why!
+
+═══════════════════════════════════════════════════════════════
+
+STEP 1: CHECK SERIAL MONITOR OUTPUT
+═══════════════════════════════════════════════════════════════
+
+I just deployed a diagnostic tool to F:\code.py
+
+1. Your ESP32 should reboot automatically (wait ~5 seconds)
+2. Open serial monitor at 115200 baud
+3. Look for output that says:
+
+   "RADAR DIAGNOSTIC - Minimal Test"
+   
+4. Every 3 seconds you'll see a status report
+
+What to look for:
+───────────────────────────────────────────────────────────────
+A) "Total bytes: 0" 
+   → NO DATA - Wiring problem! Go to STEP 2
+
+B) "Last 3s: 15000 bytes" + "Basic frames: 10"
+   → WORKING! Go to STEP 5
+
+C) "Last 3s: 5000 bytes" + "Basic frames: 0"
+   → WRONG PROTOCOL - Go to STEP 4
+
+═══════════════════════════════════════════════════════════════
+
+STEP 2: FIX WIRING (If no bytes received)
+═══════════════════════════════════════════════════════════════
+
+Current connections should be:
+  Radar → ESP32
+  ─────────────────
+  TX (Yellow) → IO44
+  RX (Green)  → IO43
+  VCC (Red)   → 5V
+  GND (Black) → GND
+
+Try these fixes IN ORDER:
+
+Fix 2A: Swap TX/RX
+──────────────────
+The #1 most common problem!
+
+Physically swap the wires:
+  TX (Yellow) → IO43 (instead of IO44)
+  RX (Green)  → IO44 (instead of IO43)
+
+Reset device and check serial output again.
+
+Fix 2B: Check Power
+───────────────────
+• Look for LED on the HLK-LD2450 radar
+• If no LED: Check 5V and GND connections
+• Radar needs 5V (NOT 3.3V!)
+
+Fix 2C: Try Different Pins
+───────────────────────────
+Your working code might use different pins.
+
+Check F:\code.py.working for pin numbers, then modify
+the diagnostic.
+
+═══════════════════════════════════════════════════════════════
+
+STEP 3: CHECK OLED DISPLAY
+═══════════════════════════════════════════════════════════════
+
+If the OLED isn't showing anything:
+
+Test 3A: Run I2C Scanner
+─────────────────────────
+```powershell
+Copy-Item F:\i2c_scan.py F:\code.py -Force
+```
+
+Wait 5 seconds, check serial for:
+  "Found devices at addresses:"
+  "  0x3C (60)" or "  0x3D (61)"
+
+If no devices found:
+  • Check SDA/SCL wiring
+  • Check OLED power
+  • OLED might be dead
+
+Test 3B: Use Working Code
+──────────────────────────
+```powershell
+Copy-Item F:\code.py.working F:\code.py -Force
+```
+
+If THIS works but mine doesn't, there's a difference
+in initialization. Let me know and I'll fix it!
+
+═══════════════════════════════════════════════════════════════
+
+STEP 4: FIX PROTOCOL MISMATCH
+═══════════════════════════════════════════════════════════════
+
+If you see bytes but no frames detected:
+
+Check serial output - it shows raw buffer like:
+  "Raw buffer: AA 55 00 1C 04 00 ..."
+
+If you see:
+• AA FF → Basic mode (my code should detect this)
+• AA 55 → Advanced mode (my code should detect this)
+• Something else → Unknown radar mode
+
+If neither AA FF nor AA 55 appears:
+  → Try different baudrate
+  → Radar might need configuration
+
+═══════════════════════════════════════════════════════════════
+
+STEP 5: RESTORE ALIEN DISPLAY
+═══════════════════════════════════════════════════════════════
+
+Once radar is working (bytes + frames detected):
+
+```powershell
+Copy-Item F:\code_dual_protocol.py F:\code.py -Force
+```
+
+OR if that doesn't work:
+
+```powershell
+Copy-Item F:\code_alien_style.py F:\code.py -Force
+```
+
+═══════════════════════════════════════════════════════════════
+
+QUICK REFERENCE - FILES ON YOUR DEVICE
+═══════════════════════════════════════════════════════════════
+
+F:\code.py                  ← ACTIVE (currently minimal test)
+F:\code.py.working          ← Your original working code
+F:\code_dual_protocol.py    ← Alien style + dual protocol
+F:\code_alien_style.py      ← Alien style + basic protocol
+F:\test_radar_minimal.py    ← Diagnostic (what's running now)
+F:\i2c_scan.py             ← OLED address finder
+F:\radar_diagnostic.py      ← Another diagnostic
+
+═══════════════════════════════════════════════════════════════
+
+COMMON PROBLEMS & SOLUTIONS
+═══════════════════════════════════════════════════════════════
+
+Problem: "import adafruit_ssd1306" fails
+Solution: Library missing. Check F:\lib\ folder
+
+Problem: NeoPixel stays off
+Solution: Brightness set too low or power issue
+
+Problem: Code.py changes but nothing happens
+Solution: Device not auto-reloading. Physically reset it.
+
+Problem: Serial shows nothing
+Solution: Wrong COM port or baud rate (use 115200)
+
+═══════════════════════════════════════════════════════════════
+
+WHAT'S DIFFERENT BETWEEN CODES?
+═══════════════════════════════════════════════════════════════
+
+Your Working Code:
+• Uses Advanced protocol (0xAA 0x55)
+• Ring buffer with checksums
+• More complex parsing
+
+My Alien Style Code:
+• Tries BOTH protocols
+• Simpler parsing
+• Better visual effects
+• Should work with either mode!
+
+═══════════════════════════════════════════════════════════════
+
+📞 CURRENT STATUS CHECK
+═══════════════════════════════════════════════════════════════
+
+Right now, your ESP32 is running: test_radar_minimal.py
+
+This will tell us EXACTLY what's happening:
+✓ Is UART receiving bytes?
+✓ Which protocol is the radar using?
+✓ Are frames being detected?
+✓ What does the raw data look like?
+
+Connect to serial @ 115200 baud and tell me what you see!
+
+The output will look like:
+───────────────────────────────────────────────────────────────
+[Check #1 @ 3.0s]
+  Total bytes: 15234
+  Last 3s: 15234 bytes (5078.0 bytes/sec)
+  Basic frames (0xAA 0xFF): 12
+  Advanced frames (0xAA 0x55): 0
+  Buffer size: 360 bytes
+
+  ✓ Radar is WORKING!
+    Mode: BASIC (0xAA 0xFF)
+───────────────────────────────────────────────────────────────
+
+Tell me what your serial output says and I can help!
