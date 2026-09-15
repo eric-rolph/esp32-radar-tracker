@@ -1,0 +1,188 @@
+{
+  "asset": {
+    "display_name": "Barringer Meteor Crater",
+    "id": "ericrolph_meteor_crater",
+    "zip": "meteor_crater_ericrolph.zip"
+  },
+  "footprint": {
+    "bounds": [
+      496923.0,
+      3875068.0,
+      498971.0,
+      3877116.0
+    ],
+    "epsg": 32612,
+    "size_m": 2048.0,
+    "south": 3875068.0,
+    "west": 496923.0,
+    "wgs84_bbox_swne": [
+      35.018255023653055,
+      -111.03373501447717,
+      35.03672682222758,
+      -111.01127901394821
+    ]
+  },
+  "roads": {
+    "by_type": {
+      "service": 10,
+      "tertiary": 1,
+      "track": 15
+    },
+    "length_m": 9741.1,
+    "roads": 26,
+    "ways_seen": 27
+  },
+  "schema": "ericrolph-beamng-maps-handoff-v1",
+  "shipped": {
+    "art/terrains/main.materials.json": {
+      "sha256": "392564232352673b69b55f72825a54e4f0f94b4755dc95dd00cec42ded091530",
+      "size": 11225
+    },
+    "info.json": {
+      "sha256": "c236a8ef236ac5b5594683b0fb75990eca84d9276ce21472e992efa68667cde2",
+      "size": 1839
+    },
+    "theTerrain.ter": {
+      "sha256": "7a8a61caec97137e1eee66c9d38a005efaeb6a1980368a84d1bfbfddcb128036",
+      "size": 50331716
+    },
+    "theTerrain.terrain.json": {
+      "sha256": "4d9989814f036505502235172328d291ebdbd51ca5b9f098b0ed652af597afab",
+      "size": 561
+    },
+    "theTerrain.terrainheightmap.png": {
+      "sha256": "862a4feda94f462bc8c8476c6dfc544c6e9498964aed0af8ab3728c1247c36f6",
+      "size": 16104276
+    }
+  },
+  "site": {
+    "center_lat": 35.0275,
+    "center_lon": -111.0225,
+    "epsg": 32612,
+    "place": "Coconino County, Arizona, USA",
+    "size_px": 4096,
+    "square_size_m": 0.5
+  },
+  "sources": {
+    "elevation": [
+      {
+        "kind": "usgs_3dep",
+        "resolution": 1.0
+      },
+      {
+        "citation": "Meteor Crater, AZ (2010). NCALM / M. Palucis. https://doi.org/10.5069/G9V40S4C",
+        "kind": "ot_grid",
+        "license": "OpenTopography - freely available; cite the DOI",
+        "name": "az10_palucis_hh",
+        "prefix": "AZ10_Palucis/AZ10_Palucis_hh/"
+      }
+    ],
+    "imagery": "USGS/USDA NAIP orthoimagery via The National Map (public domain)",
+    "roads": "OpenStreetMap contributors, ODbL 1.0"
+  },
+  "spawns": [
+    {
+      "default": true,
+      "heading_deg": 180.0,
+      "label": "North Rim Visitor Center",
+      "lat": 35.0335,
+      "level_xy": [
+        28.04,
+        666.32
+      ],
+      "lon": -111.0222,
+      "objectname": "spawn_north_rim_visitor_center",
+      "z": 156.39
+    },
+    {
+      "default": false,
+      "heading_deg": 0.0,
+      "label": "Crater Floor",
+      "lat": 35.0275,
+      "level_xy": [
+        0.52,
+        0.95
+      ],
+      "lon": -111.0225,
+      "objectname": "spawn_crater_floor",
+      "z": 9.77
+    },
+    {
+      "default": false,
+      "heading_deg": 0.0,
+      "label": "South Rim",
+      "lat": 35.0225,
+      "level_xy": [
+        0.4,
+        -553.54
+      ],
+      "lon": -111.0225,
+      "objectname": "spawn_south_rim",
+      "z": 179.95
+    }
+  ],
+  "terrain": {
+    "materials": [
+      "mc_desert_floor",
+      "mc_ejecta_gravel",
+      "mc_limestone_rim",
+      "mc_talus"
+    ],
+    "max_elevation_m": 1750.7005615234375,
+    "max_height_m": 200.0,
+    "min_elevation_m": 1554.050537109375,
+    "size_px": 4096,
+    "square_size_m": 0.5,
+    "stats": {
+      "despike_threshold_m": 4.0,
+      "footprint": {
+        "epsg": 32612,
+        "size_m": 2048.0,
+        "south": 3875068.0,
+        "west": 496923.0
+      },
+      "holes_filled": 0,
+      "layer_fractions": {
+        "mc_desert_floor": 0.4764820337295532,
+        "mc_ejecta_gravel": 0.26973599195480347,
+        "mc_limestone_rim": 0.13356351852416992,
+        "mc_talus": 0.12021845579147339
+      },
+      "max_elevation_m": 1750.7005615234375,
+      "mean_elevation_m": 1680.2989501953125,
+      "min_elevation_m": 1554.050537109375,
+      "relief_m": 196.6500244140625,
+      "size_px": 4096,
+      "slope_mean_deg": 11.025468826293945,
+      "slope_over_30_fraction": 0.1104702353477478,
+      "slope_p95_deg": 37.905723571777344,
+      "smooth_sigma_px": 0.0,
+      "sources": [
+        {
+          "kind": "usgs_3dep",
+          "tiles": 4,
+          "valid_fraction": 1.0
+        },
+        {
+          "datum_shift_m": -0.029052734375,
+          "files": 1,
+          "kind": "ot_grid",
+          "name": "az10_palucis_hh",
+          "overlay_valid_fraction": 1.0
+        }
+      ],
+      "spikes_clamped": 68,
+      "square_size_m": 0.5
+    },
+    "terrain_block": {
+      "maxHeight": 200.0,
+      "position": [
+        -1024.0,
+        -1024.0,
+        0
+      ],
+      "size": 4096,
+      "squareSize": 0.5
+    }
+  }
+}

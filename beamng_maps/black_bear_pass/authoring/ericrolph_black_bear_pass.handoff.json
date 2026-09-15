@@ -1,0 +1,174 @@
+{
+  "asset": {
+    "display_name": "Black Bear Pass",
+    "id": "ericrolph_black_bear_pass",
+    "zip": "black_bear_pass_ericrolph.zip"
+  },
+  "footprint": {
+    "bounds": [
+      255143.0,
+      4197600.0,
+      259239.0,
+      4201696.0
+    ],
+    "epsg": 32613,
+    "size_m": 4096.0,
+    "south": 4197600.0,
+    "west": 255143.0,
+    "wgs84_bbox_swne": [
+      37.89300607678312,
+      -107.78596730632748,
+      37.93097354827408,
+      -107.7380446179883
+    ]
+  },
+  "roads": {
+    "by_type": {
+      "track": 19,
+      "unclassified": 3
+    },
+    "length_m": 20793.6,
+    "roads": 22,
+    "ways_seen": 26
+  },
+  "schema": "ericrolph-beamng-maps-handoff-v1",
+  "shipped": {
+    "art/terrains/main.materials.json": {
+      "sha256": "5ebc79a667998fe8ee099ddf9b0b5634fc89db18952378d2d6ab56a1f3aae993",
+      "size": 11260
+    },
+    "info.json": {
+      "sha256": "49b3cef13607b9cf5c93493c9611b6223399d2c29abbae1a2cbd78924cbf16b1",
+      "size": 1732
+    },
+    "theTerrain.ter": {
+      "sha256": "26e184fbaaca00a4ae34de87debbbdb639e3b0b9cf29c18fc815f762803e2ac4",
+      "size": 50331705
+    },
+    "theTerrain.terrain.json": {
+      "sha256": "b98f2308c92861f1d6613a9f8dcf71301f96c11c26fd21469b9d8ee6f652675c",
+      "size": 554
+    },
+    "theTerrain.terrainheightmap.png": {
+      "sha256": "58f8774e93490ec8fce0217922d89d0cc28354170558343a07d86f3346c3c863",
+      "size": 13880938
+    }
+  },
+  "site": {
+    "center_lat": 37.912,
+    "center_lon": -107.762,
+    "epsg": 32613,
+    "place": "San Juan Mountains, San Miguel / Ouray County, Colorado, USA",
+    "size_px": 4096,
+    "square_size_m": 1.0
+  },
+  "sources": {
+    "elevation": [
+      {
+        "citation": "CO_SanLuisJuanMiguel_2020_D20 lidar via USGS 3DEP",
+        "kind": "usgs_3dep",
+        "resolution": 1.0
+      }
+    ],
+    "imagery": "USGS/USDA NAIP orthoimagery via The National Map (public domain)",
+    "roads": "OpenStreetMap contributors, ODbL 1.0"
+  },
+  "spawns": [
+    {
+      "default": true,
+      "heading_deg": 300.0,
+      "label": "Pass Summit",
+      "lat": 37.9006,
+      "level_xy": [
+        1184.92,
+        -1300.42
+      ],
+      "lon": -107.7481,
+      "objectname": "spawn_pass_summit",
+      "z": 1171.44
+    },
+    {
+      "default": false,
+      "heading_deg": 300.0,
+      "label": "The Steps",
+      "lat": 37.9145,
+      "level_xy": [
+        -35.7,
+        279.67
+      ],
+      "lon": -107.7625,
+      "objectname": "spawn_the_steps",
+      "z": 902.39
+    },
+    {
+      "default": false,
+      "heading_deg": 320.0,
+      "label": "Bridal Veil Top",
+      "lat": 37.9215,
+      "level_xy": [
+        -672.03,
+        1076.13
+      ],
+      "lon": -107.77,
+      "objectname": "spawn_bridal_veil_top",
+      "z": 252.94
+    }
+  ],
+  "terrain": {
+    "materials": [
+      "bb_tundra",
+      "bb_talus",
+      "bb_cliff_rock",
+      "bb_scree_slope"
+    ],
+    "max_elevation_m": 4109.67626953125,
+    "max_height_m": 1405.0,
+    "min_elevation_m": 2720.259765625,
+    "size_px": 4096,
+    "square_size_m": 1.0,
+    "stats": {
+      "despike_threshold_m": 8.0,
+      "footprint": {
+        "epsg": 32613,
+        "size_m": 4096.0,
+        "south": 4197600.0,
+        "west": 255143.0
+      },
+      "holes_filled": 0,
+      "layer_fractions": {
+        "bb_cliff_rock": 0.11649328470230103,
+        "bb_scree_slope": 0.39885520935058594,
+        "bb_talus": 0.31254857778549194,
+        "bb_tundra": 0.1721029281616211
+      },
+      "max_elevation_m": 4109.67626953125,
+      "mean_elevation_m": 3598.5859375,
+      "min_elevation_m": 2720.259765625,
+      "relief_m": 1389.41650390625,
+      "size_px": 4096,
+      "slope_mean_deg": 29.676286697387695,
+      "slope_over_30_fraction": 0.5149946808815002,
+      "slope_p95_deg": 55.56067657470703,
+      "smooth_sigma_px": 0.0,
+      "sources": [
+        {
+          "kind": "usgs_3dep",
+          "tiles": 9,
+          "valid_fraction": 1.0
+        }
+      ],
+      "spikes_clamped": 38,
+      "square_size_m": 1.0
+    },
+    "terrain_block": {
+      "maxHeight": 1405.0,
+      "position": [
+        -2048.0,
+        -2048.0,
+        0
+      ],
+      "size": 4096,
+      "squareSize": 1.0
+    }
+  }
+}

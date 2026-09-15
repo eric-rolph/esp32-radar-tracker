@@ -76,3 +76,18 @@ com_port.txt
 *.temp
 tmp/
 temp/
+
+# ========================================
+# BeamNG maps pack: track source, not build output
+# ========================================
+# Public GIS downloads, generated level trees and dist ZIPs are rebuilt by
+# `python beamng_maps/build.py <key> all`; only specs, generators and
+# authoring evidence are tracked.
+beamng_maps/*/data/
+beamng_maps/*/mod/
+beamng_maps/*/dist/
+beamng_maps/*/textures/
+beamng_maps/**/__pycache__/
+
+# Test caches
+.pytest_cache/

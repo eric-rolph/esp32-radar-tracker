@@ -1,0 +1,175 @@
+{
+  "asset": {
+    "display_name": "Mount St. Helens Pumice Plain",
+    "id": "ericrolph_mt_st_helens",
+    "zip": "mt_st_helens_ericrolph.zip"
+  },
+  "footprint": {
+    "bounds": [
+      559396.0,
+      5115960.0,
+      565540.0,
+      5122104.0
+    ],
+    "epsg": 32610,
+    "size_m": 6144.0,
+    "south": 5115960.0,
+    "west": 559396.0,
+    "wgs84_bbox_swne": [
+      46.19406117679134,
+      -122.23022573554017,
+      46.24991599118204,
+      -122.14975462446839
+    ]
+  },
+  "roads": {
+    "by_type": {
+      "track": 1
+    },
+    "length_m": 342.7,
+    "roads": 1,
+    "ways_seen": 1
+  },
+  "schema": "ericrolph-beamng-maps-handoff-v1",
+  "shipped": {
+    "art/terrains/main.materials.json": {
+      "sha256": "a9e2b7aaa9b5a025bd5864a74e4e347b999c3ad56f7b761cdb4b42e6b5c76d9d",
+      "size": 13840
+    },
+    "info.json": {
+      "sha256": "f0aa592a08abd38ead83ac1e1d6a6cccf99296b5eec781cb0b08afce92fa1b55",
+      "size": 1804
+    },
+    "theTerrain.ter": {
+      "sha256": "fc634bb5c757816edde66bf737d1c2f19f90acb0c366b1a2c06dbc2fb23c0132",
+      "size": 50331729
+    },
+    "theTerrain.terrain.json": {
+      "sha256": "44c2d66a7c2b40e030d8362c080dd511148b050cb0d4899850e46fe269bf1b7a",
+      "size": 579
+    },
+    "theTerrain.terrainheightmap.png": {
+      "sha256": "ad345704270e6880c23cfed37c785ce0db61312ecbb32cfe66566936b7c95980",
+      "size": 14706554
+    }
+  },
+  "site": {
+    "center_lat": 46.222,
+    "center_lon": -122.19,
+    "epsg": 32610,
+    "place": "Skamania County, Washington, USA",
+    "size_px": 4096,
+    "square_size_m": 1.5
+  },
+  "sources": {
+    "elevation": [
+      {
+        "citation": "WA_FEMAHQ_2018_D18 lidar via USGS 3DEP (post-eruption surface incl. the lava dome)",
+        "kind": "usgs_3dep",
+        "resolution": 1.0
+      }
+    ],
+    "imagery": "USGS/USDA NAIP orthoimagery via The National Map (public domain)",
+    "roads": "OpenStreetMap contributors, ODbL 1.0"
+  },
+  "spawns": [
+    {
+      "default": true,
+      "heading_deg": 180.0,
+      "label": "Pumice Plain",
+      "lat": 46.238,
+      "level_xy": [
+        -17.37,
+        1778.3
+      ],
+      "lon": -122.19,
+      "objectname": "spawn_pumice_plain",
+      "z": 205.39
+    },
+    {
+      "default": false,
+      "heading_deg": 180.0,
+      "label": "Crater Mouth",
+      "lat": 46.215,
+      "level_xy": [
+        8.72,
+        -777.25
+      ],
+      "lon": -122.19,
+      "objectname": "spawn_crater_mouth",
+      "z": 705.59
+    },
+    {
+      "default": false,
+      "heading_deg": 135.0,
+      "label": "Toutle Hummocks",
+      "lat": 46.245,
+      "level_xy": [
+        -1952.55,
+        2536.7
+      ],
+      "lon": -122.215,
+      "objectname": "spawn_toutle_hummocks",
+      "z": 100.42
+    }
+  ],
+  "terrain": {
+    "materials": [
+      "sh_pumice_plain",
+      "sh_ash_gully",
+      "sh_crater_wall",
+      "sh_debris_slope",
+      "sh_snow_ice"
+    ],
+    "max_elevation_m": 2476.904052734375,
+    "max_height_m": 1547.0,
+    "min_elevation_m": 946.3230590820312,
+    "size_px": 4096,
+    "square_size_m": 1.5,
+    "stats": {
+      "despike_threshold_m": 10.0,
+      "footprint": {
+        "epsg": 32610,
+        "size_m": 6144.0,
+        "south": 5115960.0,
+        "west": 559396.0
+      },
+      "holes_filled": 0,
+      "layer_fractions": {
+        "sh_ash_gully": 0.2787843942642212,
+        "sh_crater_wall": 0.16954481601715088,
+        "sh_debris_slope": 0.4657318592071533,
+        "sh_pumice_plain": 0.056635141372680664,
+        "sh_snow_ice": 0.029303789138793945
+      },
+      "max_elevation_m": 2476.904052734375,
+      "mean_elevation_m": 1505.81884765625,
+      "min_elevation_m": 946.3230590820312,
+      "relief_m": 1530.5810546875,
+      "size_px": 4096,
+      "slope_mean_deg": 22.847034454345703,
+      "slope_over_30_fraction": 0.3187106251716614,
+      "slope_p95_deg": 43.50555419921875,
+      "smooth_sigma_px": 0.0,
+      "sources": [
+        {
+          "kind": "usgs_3dep",
+          "tiles": 16,
+          "valid_fraction": 1.0
+        }
+      ],
+      "spikes_clamped": 0,
+      "square_size_m": 1.5
+    },
+    "terrain_block": {
+      "maxHeight": 1547.0,
+      "position": [
+        -3072.0,
+        -3072.0,
+        0
+      ],
+      "size": 4096,
+      "squareSize": 1.5
+    }
+  }
+}

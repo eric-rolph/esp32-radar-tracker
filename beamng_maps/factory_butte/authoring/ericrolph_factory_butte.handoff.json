@@ -1,0 +1,175 @@
+{
+  "asset": {
+    "display_name": "Factory Butte Badlands",
+    "id": "ericrolph_factory_butte",
+    "zip": "factory_butte_ericrolph.zip"
+  },
+  "footprint": {
+    "bounds": [
+      506686.0,
+      4245934.0,
+      510782.0,
+      4250030.0
+    ],
+    "epsg": 32612,
+    "size_m": 4096.0,
+    "south": 4245934.0,
+    "west": 506686.0,
+    "wgs84_bbox_swne": [
+      38.361512255228384,
+      -110.92347008969435,
+      38.39846663980126,
+      -110.87652342589959
+    ]
+  },
+  "roads": {
+    "by_type": {
+      "primary": 1,
+      "track": 11,
+      "unclassified": 1
+    },
+    "length_m": 14282.9,
+    "roads": 13,
+    "ways_seen": 14
+  },
+  "schema": "ericrolph-beamng-maps-handoff-v1",
+  "shipped": {
+    "art/terrains/main.materials.json": {
+      "sha256": "3236d7f05c9c32364c2073123fd3d78d7cabe859a7ff251820769f4cf0f90f8b",
+      "size": 11155
+    },
+    "info.json": {
+      "sha256": "6f6111dc04ce926389c8a12b017b9eec741b331d0999dbf0308f6cef3b67c885",
+      "size": 1744
+    },
+    "theTerrain.ter": {
+      "sha256": "019c358cba6184aa39fde0eddc08be05ac7934c81f0031f04f64eb98bb35b193",
+      "size": 50331707
+    },
+    "theTerrain.terrain.json": {
+      "sha256": "cce37f75a175343de2275667c0d01e480dbedbf4f7c7a16b9a320d67a1d71b88",
+      "size": 552
+    },
+    "theTerrain.terrainheightmap.png": {
+      "sha256": "e535726d6c41765ecd8fc56adcd701e176c6626120d7b0e2c96c3e47d1939cc4",
+      "size": 18077832
+    }
+  },
+  "site": {
+    "center_lat": 38.38,
+    "center_lon": -110.9,
+    "epsg": 32612,
+    "place": "Wayne County, Utah, USA",
+    "size_px": 4096,
+    "square_size_m": 1.0
+  },
+  "sources": {
+    "elevation": [
+      {
+        "citation": "UT_StatewideSouth_2020_A20 lidar (Utah Geospatial Resource Center) via USGS 3DEP",
+        "kind": "usgs_3dep",
+        "resolution": 1.0
+      }
+    ],
+    "imagery": "USGS/USDA NAIP orthoimagery via The National Map (public domain)",
+    "roads": "OpenStreetMap contributors, ODbL 1.0"
+  },
+  "spawns": [
+    {
+      "default": true,
+      "heading_deg": 60.0,
+      "label": "Butte Base",
+      "lat": 38.38,
+      "level_xy": [
+        -436.48,
+        0.45
+      ],
+      "lon": -110.905,
+      "objectname": "spawn_butte_base",
+      "z": 53.13
+    },
+    {
+      "default": false,
+      "heading_deg": 0.0,
+      "label": "Badlands South",
+      "lat": 38.366,
+      "level_xy": [
+        438.72,
+        -1552.03
+      ],
+      "lon": -110.895,
+      "objectname": "spawn_badlands_south",
+      "z": 50.05
+    },
+    {
+      "default": false,
+      "heading_deg": 90.0,
+      "label": "Wash West",
+      "lat": 38.385,
+      "level_xy": [
+        -1572.42,
+        554.16
+      ],
+      "lon": -110.918,
+      "objectname": "spawn_wash_west",
+      "z": 74.04
+    }
+  ],
+  "terrain": {
+    "materials": [
+      "fb_mud_flat",
+      "fb_shale_slope",
+      "fb_clay_fin",
+      "fb_caprock"
+    ],
+    "max_elevation_m": 1456.58447265625,
+    "max_height_m": 106.0,
+    "min_elevation_m": 1353.036376953125,
+    "size_px": 4096,
+    "square_size_m": 1.0,
+    "stats": {
+      "despike_threshold_m": 8.0,
+      "footprint": {
+        "epsg": 32612,
+        "size_m": 4096.0,
+        "south": 4245934.0,
+        "west": 506686.0
+      },
+      "holes_filled": 0,
+      "layer_fractions": {
+        "fb_caprock": 0.01992720365524292,
+        "fb_clay_fin": 0.0965726375579834,
+        "fb_mud_flat": 0.6193550229072571,
+        "fb_shale_slope": 0.2641451358795166
+      },
+      "max_elevation_m": 1456.58447265625,
+      "mean_elevation_m": 1408.7740478515625,
+      "min_elevation_m": 1353.036376953125,
+      "relief_m": 103.548095703125,
+      "size_px": 4096,
+      "slope_mean_deg": 7.9901227951049805,
+      "slope_over_30_fraction": 0.05988633632659912,
+      "slope_p95_deg": 32.134674072265625,
+      "smooth_sigma_px": 0.0,
+      "sources": [
+        {
+          "kind": "usgs_3dep",
+          "tiles": 9,
+          "valid_fraction": 1.0
+        }
+      ],
+      "spikes_clamped": 2,
+      "square_size_m": 1.0
+    },
+    "terrain_block": {
+      "maxHeight": 106.0,
+      "position": [
+        -2048.0,
+        -2048.0,
+        0
+      ],
+      "size": 4096,
+      "squareSize": 1.0
+    }
+  }
+}

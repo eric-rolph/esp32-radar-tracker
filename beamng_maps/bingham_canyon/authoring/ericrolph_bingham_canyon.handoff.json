@@ -1,0 +1,175 @@
+{
+  "asset": {
+    "display_name": "Bingham Canyon Mine",
+    "id": "ericrolph_bingham_canyon",
+    "zip": "bingham_canyon_ericrolph.zip"
+  },
+  "footprint": {
+    "bounds": [
+      399431.0,
+      4483372.0,
+      405575.0,
+      4489516.0
+    ],
+    "epsg": 32612,
+    "size_m": 6144.0,
+    "south": 4483372.0,
+    "west": 399431.0,
+    "wgs84_bbox_swne": [
+      40.49496261128684,
+      -112.1877552260559,
+      40.55102505792426,
+      -112.11428900634546
+    ]
+  },
+  "roads": {
+    "by_type": {
+      "service": 139,
+      "track": 10,
+      "unclassified": 2
+    },
+    "length_m": 102949.7,
+    "roads": 151,
+    "ways_seen": 158
+  },
+  "schema": "ericrolph-beamng-maps-handoff-v1",
+  "shipped": {
+    "art/terrains/main.materials.json": {
+      "sha256": "a56f90f7b43414e06c3d909fee7170496a0ed76a606b4eb017548636949fe268",
+      "size": 11298
+    },
+    "info.json": {
+      "sha256": "70a0e445d380667fb15ccdc80ac6d360407d1dedbc6dbe7c48e66a9d6fa57951",
+      "size": 1731
+    },
+    "theTerrain.ter": {
+      "sha256": "6e6145603dd1565ef5ac7be17961fd4d6b4f031dc717ad71d0c048c9f9b3c2cb",
+      "size": 50331718
+    },
+    "theTerrain.terrain.json": {
+      "sha256": "ead4da429ace4587b99fcde8968f1c23e62b5a7466298b6ba577e1fa4b22e24d",
+      "size": 565
+    },
+    "theTerrain.terrainheightmap.png": {
+      "sha256": "2842781ec5f823a0844823d8e78f59380385de3707fdfa3a41de3c8d79ba26e4",
+      "size": 15598656
+    }
+  },
+  "site": {
+    "center_lat": 40.523,
+    "center_lon": -112.151,
+    "epsg": 32612,
+    "place": "Salt Lake County, Utah, USA",
+    "size_px": 4096,
+    "square_size_m": 1.5
+  },
+  "sources": {
+    "elevation": [
+      {
+        "citation": "UT_2023SaltLakeCo_C24 lidar via USGS 3DEP",
+        "kind": "usgs_3dep",
+        "resolution": 1.0
+      }
+    ],
+    "imagery": "USGS/USDA NAIP orthoimagery via The National Map (public domain)",
+    "roads": "OpenStreetMap contributors, ODbL 1.0"
+  },
+  "spawns": [
+    {
+      "default": true,
+      "heading_deg": 270.0,
+      "label": "Pit Rim East",
+      "lat": 40.523,
+      "level_xy": [
+        1948.89,
+        -25.1
+      ],
+      "lon": -112.128,
+      "objectname": "spawn_pit_rim_east",
+      "z": 826.92
+    },
+    {
+      "default": false,
+      "heading_deg": 90.0,
+      "label": "Pit Floor",
+      "lat": 40.523,
+      "level_xy": [
+        0.61,
+        0.08
+      ],
+      "lon": -112.151,
+      "objectname": "spawn_pit_floor",
+      "z": 77.59
+    },
+    {
+      "default": false,
+      "heading_deg": 180.0,
+      "label": "North Terraces",
+      "lat": 40.545,
+      "level_xy": [
+        32.5,
+        2442.16
+      ],
+      "lon": -112.151,
+      "objectname": "spawn_north_terraces",
+      "z": 738.91
+    }
+  ],
+  "terrain": {
+    "materials": [
+      "bc_haul_gravel",
+      "bc_bench_face",
+      "bc_waste_rock",
+      "bc_scrub_hillside"
+    ],
+    "max_elevation_m": 2803.179931640625,
+    "max_height_m": 1556.0,
+    "min_elevation_m": 1263.8441162109375,
+    "size_px": 4096,
+    "square_size_m": 1.5,
+    "stats": {
+      "despike_threshold_m": 10.0,
+      "footprint": {
+        "epsg": 32612,
+        "size_m": 6144.0,
+        "south": 4483372.0,
+        "west": 399431.0
+      },
+      "holes_filled": 0,
+      "layer_fractions": {
+        "bc_bench_face": 0.37635689973831177,
+        "bc_haul_gravel": 0.1617429256439209,
+        "bc_scrub_hillside": 0.05770266056060791,
+        "bc_waste_rock": 0.4041975140571594
+      },
+      "max_elevation_m": 2803.179931640625,
+      "mean_elevation_m": 2137.433349609375,
+      "min_elevation_m": 1263.8441162109375,
+      "relief_m": 1539.3358154296875,
+      "size_px": 4096,
+      "slope_mean_deg": 25.164806365966797,
+      "slope_over_30_fraction": 0.4603250026702881,
+      "slope_p95_deg": 49.34441375732422,
+      "smooth_sigma_px": 0.0,
+      "sources": [
+        {
+          "kind": "usgs_3dep",
+          "tiles": 16,
+          "valid_fraction": 1.0
+        }
+      ],
+      "spikes_clamped": 0,
+      "square_size_m": 1.5
+    },
+    "terrain_block": {
+      "maxHeight": 1556.0,
+      "position": [
+        -3072.0,
+        -3072.0,
+        0
+      ],
+      "size": 4096,
+      "squareSize": 1.5
+    }
+  }
+}

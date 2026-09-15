@@ -1,0 +1,187 @@
+{
+  "asset": {
+    "display_name": "Carrizo Plain - Wallace Creek",
+    "id": "ericrolph_wallace_creek",
+    "zip": "wallace_creek_ericrolph.zip"
+  },
+  "footprint": {
+    "bounds": [
+      241865.0,
+      3903684.0,
+      245961.0,
+      3907780.0
+    ],
+    "epsg": 32611,
+    "size_m": 4096.0,
+    "south": 3903684.0,
+    "west": 241865.0,
+    "wgs84_bbox_swne": [
+      35.24302947033311,
+      -119.83813628456973,
+      35.280965788145636,
+      -119.79188316568509
+    ]
+  },
+  "roads": {
+    "by_type": {
+      "track": 8,
+      "unclassified": 3
+    },
+    "length_m": 13257.8,
+    "roads": 11,
+    "ways_seen": 13
+  },
+  "schema": "ericrolph-beamng-maps-handoff-v1",
+  "shipped": {
+    "art/terrains/main.materials.json": {
+      "sha256": "e61fb0168276cbb988beabd86da73d141e3162edbfae470240c74b38b40c8890",
+      "size": 11202
+    },
+    "info.json": {
+      "sha256": "8ec22c0baaa26a568fefc4f4e0a991bbaddf0bf60290a1e1e3a79bc9983a8d7c",
+      "size": 1879
+    },
+    "theTerrain.ter": {
+      "sha256": "78421b049f3f74bfd82e080197961b5a04f9ddecfb6cf1b241fd32cef1f28a38",
+      "size": 50331714
+    },
+    "theTerrain.terrain.json": {
+      "sha256": "5e89bc76cab92950e0f8744ba6720b170f868831c64ae48621b896f6e203b783",
+      "size": 559
+    },
+    "theTerrain.terrainheightmap.png": {
+      "sha256": "d3f85468fbca23dfaf1ece01fd0b9b56c2269fba5fc587ca4e8f8c27eabcfff4",
+      "size": 13884021
+    }
+  },
+  "site": {
+    "center_lat": 35.262,
+    "center_lon": -119.815,
+    "epsg": 32611,
+    "place": "Carrizo Plain National Monument, San Luis Obispo County, California, USA",
+    "size_px": 4096,
+    "square_size_m": 1.0
+  },
+  "sources": {
+    "elevation": [
+      {
+        "kind": "usgs_3dep",
+        "resolution": 1.0
+      },
+      {
+        "citation": "B4 Project - Southern San Andreas and San Jacinto Faults (2005). USGS / NSF / NCALM. https://doi.org/10.5066/F7TQ5ZQ6",
+        "kind": "ot_tiles",
+        "license": "Public domain (U.S. Geological Survey)",
+        "name": "ca05usgsb4_be",
+        "prefix": "CA05USGSB4/CA05USGSB4_be/"
+      }
+    ],
+    "imagery": "USGS/USDA NAIP orthoimagery via The National Map (public domain)",
+    "roads": "OpenStreetMap contributors, ODbL 1.0"
+  },
+  "spawns": [
+    {
+      "default": true,
+      "heading_deg": 135.0,
+      "label": "Wallace Creek Offset",
+      "lat": 35.2717,
+      "level_xy": [
+        -1106.35,
+        1108.6
+      ],
+      "lon": -119.8275,
+      "objectname": "spawn_wallace_creek_offset",
+      "z": 100.94
+    },
+    {
+      "default": false,
+      "heading_deg": 315.0,
+      "label": "Elkhorn Scarp",
+      "lat": 35.255,
+      "level_xy": [
+        888.42,
+        -802.35
+      ],
+      "lon": -119.805,
+      "objectname": "spawn_elkhorn_scarp",
+      "z": 117.98
+    },
+    {
+      "default": false,
+      "heading_deg": 90.0,
+      "label": "Plain West",
+      "lat": 35.265,
+      "level_xy": [
+        -1355.03,
+        371.75
+      ],
+      "lon": -119.83,
+      "objectname": "spawn_plain_west",
+      "z": 65.87
+    }
+  ],
+  "terrain": {
+    "materials": [
+      "wc_grassland",
+      "wc_alluvial_wash",
+      "wc_fault_scarp",
+      "wc_dry_pond"
+    ],
+    "max_elevation_m": 1005.0794677734375,
+    "max_height_m": 417.0,
+    "min_elevation_m": 593.342529296875,
+    "size_px": 4096,
+    "square_size_m": 1.0,
+    "stats": {
+      "despike_threshold_m": 8.0,
+      "footprint": {
+        "epsg": 32611,
+        "size_m": 4096.0,
+        "south": 3903684.0,
+        "west": 241865.0
+      },
+      "holes_filled": 0,
+      "layer_fractions": {
+        "wc_alluvial_wash": 0.24025589227676392,
+        "wc_dry_pond": 6.759166717529297e-05,
+        "wc_fault_scarp": 0.08673667907714844,
+        "wc_grassland": 0.6729398369789124
+      },
+      "max_elevation_m": 1005.0794677734375,
+      "mean_elevation_m": 703.8192749023438,
+      "min_elevation_m": 593.342529296875,
+      "relief_m": 411.7369384765625,
+      "size_px": 4096,
+      "slope_mean_deg": 7.549037933349609,
+      "slope_over_30_fraction": 0.037745535373687744,
+      "slope_p95_deg": 27.737642288208008,
+      "smooth_sigma_px": 0.0,
+      "sources": [
+        {
+          "kind": "usgs_3dep",
+          "tiles": 9,
+          "valid_fraction": 1.0
+        },
+        {
+          "datum_shift_m": 34.51458740234375,
+          "files": 8,
+          "kind": "ot_tiles",
+          "name": "ca05usgsb4_be",
+          "overlay_valid_fraction": 0.3898508548736572
+        }
+      ],
+      "spikes_clamped": 0,
+      "square_size_m": 1.0
+    },
+    "terrain_block": {
+      "maxHeight": 417.0,
+      "position": [
+        -2048.0,
+        -2048.0,
+        0
+      ],
+      "size": 4096,
+      "squareSize": 1.0
+    }
+  }
+}

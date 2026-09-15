@@ -184,3 +184,11 @@ MIT License - see [LICENSE](LICENSE) file for details.
 ---
 
 **Status**: ✅ Fully functional - tested with ESP32-S3 ProS3 and HLK-LD2450
+
+## 🗺️ BeamNG maps pack (real terrain from public GIS data)
+
+`beamng_maps/` builds six BeamNG.drive levels from public lidar, orthoimagery and
+OpenStreetMap data: Barringer Meteor Crater, Carrizo Plain / Wallace Creek, Factory
+Butte, Mount St. Helens, Black Bear Pass and Bingham Canyon Mine. See
+[beamng_maps/README.md](beamng_maps/README.md) for the pipeline, the data sources and
+their licences, and the build commands.

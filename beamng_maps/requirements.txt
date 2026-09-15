@@ -1,0 +1,7 @@
+# BeamNG maps pack (public GIS -> BeamNG terrain). Python 3.11+.
+numpy>=1.26,<3
+rasterio>=1.4,<2
+scipy>=1.12,<2
+pillow>=10.4,<13
+requests>=2.31,<3
+pytest>=8,<9
