@@ -489,3 +489,36 @@ def test_deploy_local_reports_and_deploys_into_a_profile(tmp_path: Path, monkeyp
     shadow.unlink()
     release.write_bytes(release.read_bytes() + b"\x00")
     assert deploy_local.main(["--deploy"]) == 1
+
+
+def test_install_local_rejoins_parts_and_deploys(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """install_local --parts must take a delivered build straight into the profile, no rebuild."""
+
+    install_local = _load_script("install_local")
+    pack = tmp_path / "pack"
+    (pack / "meteor_crater").mkdir(parents=True)
+    (pack / "meteor_crater" / "spec.py").write_text(
+        "MOD_ID='ericrolph_meteor_crater'\nDISPLAY_NAME='Crater'\nZIP_BASENAME='meteor_crater_ericrolph.zip'\n"
+    )
+    for module in (install_local.build, install_local.join_parts, install_local.deploy_local):
+        monkeypatch.setattr(module, "PACK_ROOT", pack)
+    calls: list[tuple[str, str]] = []
+    monkeypatch.setattr(install_local.build, "run_stage", lambda key, stage, force=False: calls.append((key, stage)))
+    data = _tiny_release(tmp_path, "meteor_crater").read_bytes()
+    parts_dir = tmp_path / "parts"
+    parts_dir.mkdir()
+    (parts_dir / "meteor_crater_ericrolph.zip.part0").write_bytes(data)
+    (parts_dir / "SHA256SUMS.txt").write_text(f"{hashlib.sha256(data).hexdigest()}  meteor_crater_ericrolph.zip\n")
+    profile = tmp_path / "profile"
+    (profile / "mods").mkdir(parents=True)
+    monkeypatch.setenv("BEAMNG_MAPS_PROFILE", str(profile))
+    monkeypatch.setenv("BEAMNG_MAPS_ALLOW_RUNNING", "1")
+    assert install_local.main(["--parts", str(parts_dir)]) == 0
+    assert calls == [], "a verified delivered build must not trigger a rebuild"
+    assert (profile / "mods" / "meteor_crater_ericrolph.zip").read_bytes() == data
+    # Without parts and without a release, every stage runs (stubbed here) and the
+    # missing lock is reported rather than silently deployed.
+    (pack / "meteor_crater" / "dist" / "meteor_crater_ericrolph.zip").unlink()
+    with pytest.raises(SystemExit):
+        install_local.main(["--no-deploy"])
+    assert [stage for _, stage in calls] == ["fetch", "terrain", "level", "dist"]

@@ -56,6 +56,18 @@ python -m pytest -q tests/test_beamng_maps_pack.py   # static gates
 
 ## Getting the maps into your game
 
+The short version, from the repository root with BeamNG closed:
+
+```powershell
+pip install -r beamng_maps\requirements.txt
+python beamng_maps\install_local.py                          # build from public data, then deploy
+python beamng_maps\install_local.py --parts C:\path\to\parts   # or rejoin a delivered build, then deploy
+```
+
+`install_local.py` makes sure every map has a dist ZIP that matches its lock (rejoined
+from delivered parts, or built) and then runs `deploy_local.py --deploy`. The pieces it
+orchestrates are below.
+
 The level ZIPs (80-90 MiB each) are build output, not repository content. Two ways to
 have them locally:
 
@@ -101,7 +113,7 @@ the terrain failed to load.
 - `maplib/`: shared toolkit (`gis_sources.py`, `heightmap.py`, `texture_kit.py`,
   `level_builder.py`, `packaging.py`, `pipeline.py`).
 - `build.py` (stages), `join_parts.py` (rejoin a delivered build), `deploy_local.py`
-  (verified sync into the play profile).
+  (verified sync into the play profile), `install_local.py` (all of the above in one command).
 - `<map_key>/spec.py`: the map's authored constants: site centre, UTM zone, sample size,
   data sources with citations, terrain materials and slope rules, road widths, spawns,
   time of day and the selector copy. The generator consumes only this.
