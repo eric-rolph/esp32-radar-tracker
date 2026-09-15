@@ -54,14 +54,54 @@ python beamng_maps/build.py --all all                # every map
 python -m pytest -q tests/test_beamng_maps_pack.py   # static gates
 ```
 
-Install a map by copying `beamng_maps/<key>/dist/<key>_ericrolph.zip` into
-`%LOCALAPPDATA%\BeamNG\BeamNG.drive\current\mods\`. Each level appears in the freeroam
-level list under its display name with three spawn points.
+## Getting the maps into your game
+
+The level ZIPs (80-90 MiB each) are build output, not repository content. Two ways to
+have them locally:
+
+1. **Rejoin a delivered build.** A build handed over from a session arrives as
+   `<key>_ericrolph.zip.partN` pieces plus `SHA256SUMS.txt` (whole ZIPs exceed the
+   30 MiB delivery limit). Put every part and the sums file in one folder, then:
+
+   ```powershell
+   python beamng_maps\join_parts.py C:\path\to\downloaded_parts
+   ```
+
+   That verifies each part and each rejoined ZIP against `SHA256SUMS.txt`, writes the
+   ZIPs to `beamng_maps\<key>\dist\` and writes their release locks. A mismatch deletes
+   the ZIP rather than leaving something unverifiable to install.
+
+2. **Rebuild from the public data.** `python beamng_maps\build.py --all all` downloads
+   about 3 GB (2.3 GB of it the Meteor Crater lidar grid) and rebuilds everything;
+   allow ten to fifteen minutes.
+
+Then deploy, with BeamNG closed:
+
+```powershell
+python beamng_maps\deploy_local.py            # report: missing / stale / current per map
+python beamng_maps\deploy_local.py --deploy   # copy what is stale into the play profile, hash-verified
+```
+
+`deploy_local.py` targets `%LOCALAPPDATA%\BeamNG\BeamNG.drive\current\mods\` (set
+`BEAMNG_MAPS_PROFILE` to the profile root to override), refuses to run while the game
+is open, and refuses if any other zip below `mods\` already carries one of the
+`levels/ericrolph_<key>/` namespaces (BeamNG mounts every zip recursively, so a stale
+copy shadows the release). Launch BeamNG.drive, then Freeroam > Select Level: the six
+levels are listed under their display names (Barringer Meteor Crater, Carrizo Plain -
+Wallace Creek, Factory Butte Badlands, Mount St. Helens Pumice Plain, Black Bear Pass,
+Bingham Canyon Mine), each with three spawn points.
+
+If a level does not appear after deployment, the first place to look is
+`%LOCALAPPDATA%\BeamNG\BeamNG.drive\current\beamng.log` for lines mentioning
+`ericrolph_`; that log says whether the zip was mounted and whether `info.json` or
+the terrain failed to load.
 
 ## Layout
 
 - `maplib/`: shared toolkit (`gis_sources.py`, `heightmap.py`, `texture_kit.py`,
   `level_builder.py`, `packaging.py`, `pipeline.py`).
+- `build.py` (stages), `join_parts.py` (rejoin a delivered build), `deploy_local.py`
+  (verified sync into the play profile).
 - `<map_key>/spec.py`: the map's authored constants: site centre, UTM zone, sample size,
   data sources with citations, terrain materials and slope rules, road widths, spawns,
   time of day and the selector copy. The generator consumes only this.

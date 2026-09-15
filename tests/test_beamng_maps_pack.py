@@ -11,6 +11,7 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
+import shutil
 import struct
 import sys
 import zipfile
@@ -401,3 +402,90 @@ def test_design_ledger_matches_handoff(map_key: str) -> None:
     assert pipeline.LEDGER_HEADING in design
     rendered = pipeline.render_ledger(spec, PACK_ROOT / map_key)
     assert design[design.index(pipeline.LEDGER_HEADING) :] == rendered
+
+
+# ---------------------------------------------------------------------------
+# Delivery and local deployment tools
+# ---------------------------------------------------------------------------
+
+
+def _load_script(name: str):
+    path = PACK_ROOT / f"{name}.py"
+    loader = importlib.util.spec_from_file_location(f"beamng_maps_{name}", path)
+    module = importlib.util.module_from_spec(loader)
+    # dataclasses resolve string annotations through sys.modules[cls.__module__];
+    # a module executed without being registered there breaks every @dataclass in it.
+    sys.modules[loader.name] = module
+    loader.loader.exec_module(module)
+    return module
+
+
+def _tiny_release(tmp_path: Path, key: str) -> Path:
+    """A minimal but structurally valid level ZIP for the tooling gates."""
+
+    zip_path = tmp_path / f"{key}_ericrolph.zip"
+    with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_STORED) as archive:
+        archive.writestr(f"levels/ericrolph_{key}/info.json", json.dumps({"title": key}))
+        archive.writestr(f"levels/ericrolph_{key}/theTerrain.ter", b"\x09" + b"\x00" * 64)
+    return zip_path
+
+
+def test_join_parts_rebuilds_zip_and_lock(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    join_parts = _load_script("join_parts")
+    pack = tmp_path / "pack"
+    (pack / "meteor_crater").mkdir(parents=True)
+    (pack / "meteor_crater" / "spec.py").write_text("MOD_ID='ericrolph_meteor_crater'\n")
+    monkeypatch.setattr(join_parts, "PACK_ROOT", pack)
+    original = _tiny_release(tmp_path, "meteor_crater")
+    data = original.read_bytes()
+    parts_dir = tmp_path / "parts"
+    parts_dir.mkdir()
+    chunks = [data[i : i + 40] for i in range(0, len(data), 40)]
+    sums = []
+    for index, chunk in enumerate(chunks):
+        part = parts_dir / f"meteor_crater_ericrolph.zip.part{index}"
+        part.write_bytes(chunk)
+        sums.append(f"{hashlib.sha256(chunk).hexdigest()}  {part.name}")
+    sums.append(f"{hashlib.sha256(data).hexdigest()}  meteor_crater_ericrolph.zip")
+    (parts_dir / "SHA256SUMS.txt").write_text("\n".join(sums) + "\n")
+    assert join_parts.join(parts_dir) == 0
+    rebuilt = pack / "meteor_crater" / "dist" / "meteor_crater_ericrolph.zip"
+    assert rebuilt.read_bytes() == data
+    lock = json.loads((pack / "meteor_crater" / "dist" / "ericrolph_meteor_crater.lock.json").read_text())
+    assert lock["sha256"] == hashlib.sha256(data).hexdigest() and lock["members"] == 2
+    # A corrupted part is refused and nothing is left behind.
+    (parts_dir / "meteor_crater_ericrolph.zip.part0").write_bytes(b"x" * 40)
+    rebuilt.unlink()
+    assert join_parts.join(parts_dir) == 1
+    assert not rebuilt.exists()
+
+
+def test_deploy_local_reports_and_deploys_into_a_profile(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    deploy_local = _load_script("deploy_local")
+    pack = tmp_path / "pack"
+    (pack / "meteor_crater" / "dist").mkdir(parents=True)
+    (pack / "meteor_crater" / "spec.py").write_text(
+        "MOD_ID='ericrolph_meteor_crater'\nDISPLAY_NAME='Crater'\nZIP_BASENAME='meteor_crater_ericrolph.zip'\n"
+    )
+    release = _tiny_release(pack / "meteor_crater" / "dist", "meteor_crater")
+    lock = {"sha256": hashlib.sha256(release.read_bytes()).hexdigest()}
+    (pack / "meteor_crater" / "dist" / "ericrolph_meteor_crater.lock.json").write_text(json.dumps(lock))
+    profile = tmp_path / "profile"
+    (profile / "mods").mkdir(parents=True)
+    monkeypatch.setattr(deploy_local, "PACK_ROOT", pack)
+    monkeypatch.setenv("BEAMNG_MAPS_PROFILE", str(profile))
+    monkeypatch.setenv("BEAMNG_MAPS_ALLOW_RUNNING", "1")
+    assert deploy_local.main([]) == 1  # missing -> stale report exits 1
+    assert deploy_local.main(["--deploy"]) == 0
+    deployed = profile / "mods" / "meteor_crater_ericrolph.zip"
+    assert deployed.read_bytes() == release.read_bytes()
+    assert deploy_local.main([]) == 0  # current
+    # A second copy of the namespace anywhere below mods/ is a conflict, by content.
+    shadow = profile / "mods" / "repo" / "old_copy.zip"
+    shadow.parent.mkdir()
+    shutil.copyfile(release, shadow)
+    assert deploy_local.main(["--deploy"]) == 1
+    # A dist that disagrees with its lock is never deployed.
+    shadow.unlink()
+    release.write_bytes(release.read_bytes() + b"\x00")
+    assert deploy_local.main(["--deploy"]) == 1
