@@ -522,3 +522,43 @@ def test_install_local_rejoins_parts_and_deploys(tmp_path: Path, monkeypatch: py
     with pytest.raises(SystemExit):
         install_local.main(["--no-deploy"])
     assert [stage for _, stage in calls] == ["fetch", "terrain", "level", "dist"]
+
+
+def test_install_local_release_download_verifies_and_locks(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """--release pulls each ZIP from the release, checks it against SHA256SUMS.txt, writes the lock."""
+
+    install_local = _load_script("install_local")
+    pack = tmp_path / "pack"
+    (pack / "meteor_crater").mkdir(parents=True)
+    (pack / "meteor_crater" / "spec.py").write_text(
+        "MOD_ID='ericrolph_meteor_crater'\nDISPLAY_NAME='Crater'\nZIP_BASENAME='meteor_crater_ericrolph.zip'\n"
+    )
+    for module in (install_local.build, install_local.join_parts, install_local.deploy_local):
+        monkeypatch.setattr(module, "PACK_ROOT", pack)
+    data = _tiny_release(tmp_path, "meteor_crater").read_bytes()
+    served = {
+        "SHA256SUMS.txt": f"{hashlib.sha256(data).hexdigest()}  meteor_crater_ericrolph.zip\n".encode(),
+        "meteor_crater_ericrolph.zip": data,
+    }
+    requested: list[str] = []
+
+    def fake_download(url: str, path: Path) -> None:
+        requested.append(url)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(served[url.rsplit("/", 1)[1]])
+
+    install_local.fetch_release("beamng-maps-v1", ["meteor_crater"], repo="o/r", download=fake_download)
+    assert requested == [
+        "https://github.com/o/r/releases/download/beamng-maps-v1/SHA256SUMS.txt",
+        "https://github.com/o/r/releases/download/beamng-maps-v1/meteor_crater_ericrolph.zip",
+    ]
+    dist = pack / "meteor_crater" / "dist"
+    assert (dist / "meteor_crater_ericrolph.zip").read_bytes() == data
+    lock = json.loads((dist / "ericrolph_meteor_crater.lock.json").read_text())
+    assert lock["sha256"] == hashlib.sha256(data).hexdigest() and "beamng-maps-v1" in lock["origin"]
+    # A tampered asset is deleted, never locked.
+    served["meteor_crater_ericrolph.zip"] = data + b"\x00"
+    (dist / "meteor_crater_ericrolph.zip").unlink()
+    with pytest.raises(SystemExit):
+        install_local.fetch_release("beamng-maps-v1", ["meteor_crater"], repo="o/r", download=fake_download)
+    assert not (dist / "meteor_crater_ericrolph.zip").exists()

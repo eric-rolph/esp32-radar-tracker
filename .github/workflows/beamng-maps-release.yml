@@ -1,0 +1,94 @@
+name: BeamNG maps release
+
+# Rebuilds the six levels from public data on a GitHub runner and attaches the ZIPs
+# (plus SHA256SUMS.txt and the release locks) to a GitHub Release, so a play-test
+# install is a download rather than a build. Whole ZIPs are 80-90 MiB, over the
+# session file-delivery limit, and release assets are the one place they can live
+# without bloating the repository.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to create or update"
+        required: true
+        default: "beamng-maps-v1"
+      maps:
+        description: "Space-separated map keys (empty = all)"
+        required: false
+        default: ""
+  push:
+    tags:
+      - "beamng-maps-v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install the pack's dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r beamng_maps/requirements.txt
+          python -c "import rasterio; print('GDAL', rasterio.__gdal_version__)"
+          df -h / | tail -1
+
+      - name: Build every map (fetch -> terrain -> level -> dist -> ledger)
+        run: |
+          set -euo pipefail
+          MAPS="${{ github.event.inputs.maps }}"
+          if [ -z "$MAPS" ]; then
+            python beamng_maps/build.py --all all
+          else
+            for key in $MAPS; do python beamng_maps/build.py "$key" all; done
+          fi
+          du -sh beamng_maps/*/dist
+          df -h / | tail -1
+
+      - name: Static gates on the built trees
+        run: python -m pytest -q tests/test_beamng_maps_pack.py
+
+      - name: Collect release assets
+        run: |
+          set -euo pipefail
+          mkdir -p release
+          cp beamng_maps/*/dist/*_ericrolph.zip release/
+          cp beamng_maps/*/dist/*.lock.json release/
+          cp beamng_maps/*/authoring/*.handoff.json release/
+          (cd release && sha256sum *.zip > SHA256SUMS.txt && cat SHA256SUMS.txt)
+          {
+            echo "Six BeamNG.drive levels built from public GIS data (USGS 3DEP, OpenTopography NCALM/B4 lidar, USGS NAIP imagery, OpenStreetMap roads)."
+            echo
+            echo "Install: drop the *_ericrolph.zip files into %LOCALAPPDATA%\\BeamNG\\BeamNG.drive\\current\\mods\\ (or run python beamng_maps/install_local.py --release ${{ github.event.inputs.tag || github.ref_name }} from the repository). Verify with SHA256SUMS.txt."
+            echo
+            echo "Built from commit ${{ github.sha }} by workflow run ${{ github.run_id }}."
+            echo
+            echo '```'
+            cat release/SHA256SUMS.txt
+            echo '```'
+          } > release/NOTES.md
+
+      - name: Create or update the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.inputs.tag || github.ref_name }}
+        run: |
+          set -euo pipefail
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" release/*.zip release/*.json release/SHA256SUMS.txt --clobber
+            gh release edit "$TAG" --notes-file release/NOTES.md
+          else
+            gh release create "$TAG" release/*.zip release/*.json release/SHA256SUMS.txt \
+              --target "${{ github.sha }}" --prerelease \
+              --title "BeamNG maps pack ($TAG)" --notes-file release/NOTES.md
+          fi
+          gh release view "$TAG" --json assets --jq '.assets[] | "\(.name)\t\(.size)"'

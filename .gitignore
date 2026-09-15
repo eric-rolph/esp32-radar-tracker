@@ -87,6 +87,7 @@ beamng_maps/*/data/
 beamng_maps/*/mod/
 beamng_maps/*/dist/
 beamng_maps/*/textures/
+beamng_maps/_downloads/
 beamng_maps/**/__pycache__/
 
 # Test caches

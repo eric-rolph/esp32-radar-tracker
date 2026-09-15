@@ -56,13 +56,31 @@ python -m pytest -q tests/test_beamng_maps_pack.py   # static gates
 
 ## Getting the maps into your game
 
-The short version, from the repository root with BeamNG closed:
+The shortest version needs no Python at all: download the six `*_ericrolph.zip` files
+from the GitHub Release (tag `beamng-maps-v1`, built by `.github/workflows/beamng-maps-release.yml`
+from the branch) into `%LOCALAPPDATA%\BeamNG\BeamNG.drive\current\mods\`. From PowerShell:
+
+```powershell
+$mods = "$env:LOCALAPPDATA\BeamNG\BeamNG.drive\current\mods"
+foreach ($k in 'meteor_crater','wallace_creek','factory_butte','mt_st_helens','black_bear_pass','bingham_canyon') {
+  Invoke-WebRequest "https://github.com/eric-rolph/esp32-radar-tracker/releases/download/beamng-maps-v1/${k}_ericrolph.zip" -OutFile "$mods\${k}_ericrolph.zip"
+}
+```
+
+With the repository checked out, the same thing hash-verified, from the repository root
+with BeamNG closed:
 
 ```powershell
 pip install -r beamng_maps\requirements.txt
-python beamng_maps\install_local.py                          # build from public data, then deploy
-python beamng_maps\install_local.py --parts C:\path\to\parts   # or rejoin a delivered build, then deploy
+python beamng_maps\install_local.py --release beamng-maps-v1     # download from the release, verify, deploy
+python beamng_maps\install_local.py                              # or build from public data, then deploy
+python beamng_maps\install_local.py --parts C:\path\to\parts    # or rejoin a delivered build, then deploy
 ```
+
+The release is rebuilt by dispatching the workflow (Actions > BeamNG maps release > Run
+workflow, tag `beamng-maps-v1`) or by pushing a `beamng-maps-v*` tag; the runner fetches
+the public data, builds, runs the static gates and uploads the ZIPs, locks, handoffs
+and `SHA256SUMS.txt`.
 
 `install_local.py` makes sure every map has a dist ZIP that matches its lock (rejoined
 from delivered parts, or built) and then runs `deploy_local.py --deploy`. The pieces it
