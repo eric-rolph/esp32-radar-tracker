@@ -18,6 +18,7 @@
 #define TARGET_DATA_SIZE 8
 #define NUM_TARGETS 3
 #define FRAME_SIZE 30
+#define STALE_TIMEOUT_MS 500UL
 
 // Frame markers
 const uint8_t REPORT_HEADER[4] = {0xAA, 0xFF, 0x03, 0x00};
@@ -79,6 +80,12 @@ public:
         }
       }
     }
+
+    // Clear stale targets if UART goes silent
+    if (_hasValidFrame && (millis() - _lastFrameMs > STALE_TIMEOUT_MS)) {
+      clearTargets();
+      _hasValidFrame = false;
+    }
   }
   
   Target targets[NUM_TARGETS];
@@ -88,6 +95,17 @@ private:
   uint8_t _buffer[50];
   int _bufferIndex = 0;
   bool _receivingFrame = false;
+  unsigned long _lastFrameMs = 0;
+  bool _hasValidFrame = false;
+
+  // HLK-LD2450 encodes signed values as sign-magnitude with bit 15 = 1 for positive
+  static int16_t decodeSigned16(uint8_t lo, uint8_t hi) {
+    uint16_t raw = ((uint16_t)hi << 8) | (uint16_t)lo;
+    if (raw & 0x8000U) {
+      return (int16_t)(raw - 0x8000U);
+    }
+    return raw == 0 ? 0 : -(int16_t)raw;
+  }
   
   void clearTargets() {
     for (int i = 0; i < NUM_TARGETS; i++) {
@@ -121,18 +139,27 @@ private:
   }
   
   void parseFrame() {
+    _lastFrameMs = millis();
+    _hasValidFrame = true;
+
     // Parse 3 targets (each target is 8 bytes)
     int offset = REPORT_HEADER_SIZE; // Start after header
     
     for (int i = 0; i < NUM_TARGETS; i++) {
-      int16_t x = (int16_t)(_buffer[offset + 1] << 8 | _buffer[offset]);
-      int16_t y = (int16_t)(_buffer[offset + 3] << 8 | _buffer[offset + 2]);
-      int16_t speed = (int16_t)(_buffer[offset + 5] << 8 | _buffer[offset + 4]);
-      uint16_t resolution = (uint16_t)(_buffer[offset + 7] << 8 | _buffer[offset + 6]);
+      int16_t x = decodeSigned16(_buffer[offset], _buffer[offset + 1]);
+      int16_t y = decodeSigned16(_buffer[offset + 2], _buffer[offset + 3]);
+      int16_t speed = decodeSigned16(_buffer[offset + 4], _buffer[offset + 5]);
+      uint16_t resolution = ((uint16_t)_buffer[offset + 7] << 8) | (uint16_t)_buffer[offset + 6];
       
       // Check if target is valid (not zero)
       if (x == 0 && y == 0) {
         targets[i].valid = false;
+        targets[i].x_mm = 0;
+        targets[i].y_mm = 0;
+        targets[i].distance_m = 0.0f;
+        targets[i].angle_deg = 0.0f;
+        targets[i].speed_cm_s = 0;
+        targets[i].resolution = 0;
       } else {
         targets[i].valid = true;
         targets[i].x_mm = x;
@@ -140,9 +167,11 @@ private:
         targets[i].speed_cm_s = speed;
         targets[i].resolution = resolution;
         
-        // Calculate distance and angle
-        targets[i].distance_m = sqrt(x * x + y * y) / 1000.0; // Convert mm to m
-        targets[i].angle_deg = atan2(x, y) * 180.0 / PI; // Angle from center
+        // Calculate distance and angle in float to prevent 16/32-bit int overflow
+        float fx = (float)x;
+        float fy = (float)y;
+        targets[i].distance_m = sqrtf(fx * fx + fy * fy) / 1000.0f;
+        targets[i].angle_deg = atan2f(fx, fy) * 180.0f / PI; // Angle from center
       }
       
       offset += TARGET_DATA_SIZE;

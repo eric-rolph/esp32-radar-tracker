@@ -8,7 +8,10 @@ import adafruit_ssd1306
 
 # Hardware
 i2c = board.STEMMA_I2C()
-oled = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c, addr=0x3D)
+try:
+    oled = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c, addr=0x3D)
+except ValueError:
+    oled = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c, addr=0x3C)
 uart = busio.UART(board.IO43, board.IO44, baudrate=256000, receiver_buffer_size=8192, timeout=0)
 pixel = neopixel.NeoPixel(board.NEOPIXEL, 1, brightness=0.2, auto_write=True)
 
@@ -263,11 +266,7 @@ while True:
     
     # Parse frames
     while len(buffer) >= FRAME_SIZE:
-        sync_idx = -1
-        for i in range(len(buffer) - 3):
-            if buffer[i:i+4] == SYNC:
-                sync_idx = i
-                break
+        sync_idx = buffer.find(SYNC)
         
         if sync_idx < 0:
             if len(buffer) > 100:
