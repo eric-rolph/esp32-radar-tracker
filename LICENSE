@@ -19,22 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-## Third-Party Components
-
-### Adafruit Libraries
-- License: MIT/BSD License
-- Projects: Adafruit_SSD1306, Adafruit_GFX
-- Copyright: Adafruit Industries
-
-### HLK-LD2450 Radar Sensor
-- Sensor by Hi-Link
-- Protocol documentation used for implementation
-
-## Acknowledgments
-
-Inspired by:
-- Alien Motion Tracker visual style by RobSmithDev
-- HLK-LD2450 Python implementations by the open-source community
