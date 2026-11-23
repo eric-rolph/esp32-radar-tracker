@@ -1,186 +1,110 @@
-# ESP32 Radar Tracker with HLK-LD2450
+# ESP32 Radar Tracker (HLK-LD2450)
 
-Real-time radar tracking system using the HLK-LD2450 24GHz mmWave radar sensor with OLED display visualization. Features both Arduino and CircuitPython implementations for the ESP32-S3.
+[![CI](https://github.com/eric-rolph/esp32-radar-tracker/actions/workflows/ci.yml/badge.svg)](https://github.com/eric-rolph/esp32-radar-tracker/actions/workflows/ci.yml)
+[![Live Web Serial Scope](https://img.shields.io/badge/Web%20Serial%20Scope-Live%20Demo-22e884?logo=googlechrome&logoColor=white)](https://eric-rolph.github.io/esp32-radar-tracker/)
+[![Platform](https://img.shields.io/badge/ESP32--S3-Arduino%20%2B%20CircuitPython-38bdf8)](arduino/ESP32_Radar_Tracker.ino)
+[![License: MIT](https://img.shields.io/badge/license-MIT-34d399)](LICENSE)
 
-## 🎯 Features
+Real-time **24 GHz mmWave radar motion tracker** for the **ESP32-S3**, **HLK-LD2450** multi-target radar sensor, and **SSD1306 128×64 OLED display** — with both **Arduino C++** and **CircuitPython 9.x** firmware plus a zero-install **Web Serial live radar scope**.
 
-- **Multi-Target Tracking**: Simultaneously tracks up to 3 targets with X/Y coordinates
-- **Real-time Visualization**: OLED display with animated radar sweep and target positions
-- **Dual Platform Support**: 
-  - Arduino C++ with optimized performance
-  - CircuitPython with multiple visualization modes
-- **Multiple Visualization Modes**:
-  - Classic radar sweep display
-  - Alien-style animated tracking
-  - Diagnostic data output
-  - Raw protocol debugging
+> **Try it in your browser:** [**Launch the Live Web Serial Radar Scope →**](https://eric-rolph.github.io/esp32-radar-tracker/)  
+> Runs an interactive 3-target simulation out of the box, or click **Connect ESP32 (Web Serial)** in Chrome/Edge to plot live raw binary LD2450 frames or JSON telemetry from your board.
 
-## 📡 Hardware Requirements
-
-- **ESP32-S3** (tested on ProS3 board)
-- **HLK-LD2450** 24GHz mmWave Radar Sensor
-- **0.96" OLED Display** (128x64, I2C, SSD1306)
-- USB-C cable for programming and power
-
-### Wiring Diagram
-
-**Radar to ESP32:**
-- TX → RX (GPIO 44)
-- RX → TX (GPIO 43)
-- VCC → 5V
-- GND → GND
-
-**OLED to ESP32:**
-- SDA → GPIO 8
-- SCL → GPIO 9
-- VCC → 3.3V
-- GND → GND
-
-## 🚀 Quick Start
-
-### Arduino Setup
-
-1. Install Arduino IDE with ESP32 support
-2. Install required libraries:
-   - Adafruit SSD1306
-   - Adafruit GFX Library
-3. Open `arduino/ESP32_Radar_Tracker.ino`
-4. Select board: **ESP32-S3 Dev Module**
-5. Upload to your ESP32
-
-### CircuitPython Setup
-
-1. Install CircuitPython 9.x on your ESP32-S3
-2. Install required libraries on device:
-   - adafruit_displayio_ssd1306
-   - adafruit_display_text
-3. Choose a visualization mode from `circuitpython/` folder
-4. Deploy using the utility tool:
-
-```powershell
-python utils/deploy_circuitpython.py
-```
-
-Available CircuitPython modes:
-- `code_correct_protocol.py` - Standard radar sweep display
-- `code_alien_style.py` - Sci-fi animated tracking
-- `code_dual_both.py` - Dual protocol support
-- `code_diagnostic.py` - Debug output
-- `code_realtime_sweep.py` - Fast refresh radar sweep
-
-## 🛠️ Utilities
-
-### Serial Monitor
-Monitor ESP32 serial output in real-time:
-```powershell
-python utils/serial_monitor.py
-```
-
-### Code Deployment
-Deploy CircuitPython code to ESP32:
-```powershell
-python utils/deploy_circuitpython.py
-```
-
-See [utils/README.md](utils/README.md) for detailed utility documentation.
-
-## 📊 HLK-LD2450 Sensor Details
-
-- **Detection Range**: 0-6 meters
-- **Angle Coverage**: ±60°
-- **Maximum Targets**: 3 simultaneous
-- **Protocol**: UART (115200 baud)
-- **Update Rate**: ~10 Hz
-- **Technology**: 24GHz FMCW radar
-
-## 🎨 Visualization Modes
-
-### Arduino Version
-- Clean radar sweep with target markers
-- Distance and position text overlay
-- 128x64 optimized graphics
-
-### CircuitPython Versions
-
-**Standard Mode** (`code_correct_protocol.py`)
-- Classic radar sweep animation
-- Target position markers
-- Distance labels
-
-**Alien Style** (`code_alien_style.py`)
-- Animated target tracking
-- Fade effects
-- Sci-fi aesthetic
-
-**Diagnostic Mode** (`code_diagnostic.py`)
-- Raw data output
-- Protocol debugging
-- Sensor status monitoring
-
-## 🔧 Troubleshooting
-
-### No Radar Data
-1. Check UART wiring (TX/RX)
-2. Verify sensor power (5V)
-3. Run diagnostic mode to check protocol
-
-### Display Not Working
-1. Verify I2C address (0x3C default)
-2. Check SDA/SCL wiring
-3. Run `i2c_scan.py` to detect display
-
-### COM Port Issues
-- Windows: Check Device Manager for COM port
-- Linux/Mac: Use `ls /dev/tty*` to find port
-- Ensure no other program is using the port
-
-## �� Project Structure
-
-```
-esp32-radar-tracker/
-├── arduino/              # Arduino C++ implementation
-│   ├── ESP32_Radar_Tracker.ino
-│   ├── HLK_LD2450.h     # Radar protocol parser
-│   └── RadarDisplay.h   # OLED graphics
-├── circuitpython/       # Multiple CircuitPython versions
-│   ├── code_correct_protocol.py
-│   ├── code_alien_style.py
-│   ├── code_diagnostic.py
-│   └── ...              # Various visualization modes
-├── utils/               # Deployment and monitoring tools
-│   ├── deploy_circuitpython.py
-│   ├── serial_monitor.py
-│   └── README.md
-├── docs/                # Additional documentation
-├── requirements.txt     # Python dependencies
-└── README.md
-```
-
-## 🤝 Contributing
-
-Contributions welcome! Areas for improvement:
-- Additional visualization modes
-- Enhanced target tracking algorithms
-- Multi-sensor support
-- Data logging features
-
-## 📝 License
-
-MIT License - see [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **Adafruit**: Display libraries and CircuitPython support
-- **Hi-Link**: HLK-LD2450 sensor and protocol documentation
-- **ESP32 Community**: Hardware support and examples
-
-## 📚 Resources
-
-- [HLK-LD2450 Datasheet](https://www.hlktech.net/index.php?id=1163)
-- [CircuitPython Documentation](https://circuitpython.org/)
-- [ESP32-S3 Technical Reference](https://www.espressif.com/en/products/socs/esp32-s3)
-- [Adafruit SSD1306 Guide](https://learn.adafruit.com/monochrome-oled-breakouts)
+<p align="center">
+  <a href="https://eric-rolph.github.io/esp32-radar-tracker/">
+    <img src="docs/radar_scope_preview.png" alt="ESP32 HLK-LD2450 Live Web Serial Radar Scope" width="820" />
+  </a>
+</p>
 
 ---
 
-**Status**: ✅ Fully functional - tested with ESP32-S3 ProS3 and HLK-LD2450
+## Wiring Diagram
+
+<p align="center">
+  <img src="docs/wiring_diagram.svg" alt="ESP32-S3, HLK-LD2450 and SSD1306 OLED wiring diagram" width="820" />
+</p>
+
+| Component | Pin | ESP32-S3 (ProS3) | Notes |
+|---|---|---|---|
+| **HLK-LD2450** | `VCC` / `GND` | `5V` / `GND` | 5 V regulated supply required |
+| **HLK-LD2450** | `TX` / `RX` | `GPIO 44` (RX) / `GPIO 43` (TX) | UART @ **256000 baud** |
+| **SSD1306 OLED** | `VCC` / `GND` | `3.3V` / `GND` | 128×64 monochrome I2C |
+| **SSD1306 OLED** | `SDA` / `SCL` | `GPIO 8` / `GPIO 9` | Auto-detects `0x3D` or `0x3C` |
+
+---
+
+## Features
+
+- **3-Target Simultaneous Tracking:** Proper HLK-LD2450 16-bit sign-magnitude decoding for X/Y coordinates, radial speed (cm/s), distance, and azimuth angle (±60°, up to 6 m), plus 500 ms stale-frame auto-clear.
+- **Unified CircuitPython Firmware (`circuitpython/code.py`):** Switch between `alien`, `sweep`, `minimal`, and `diagnostic` display themes with one variable, auto-fallback OLED I2C detection (`0x3D` → `0x3C`), NeoPixel proximity indicator, and JSON USB telemetry streaming.
+- **Optimized Arduino C++ Firmware (`arduino/`):** `HLK_LD2450.h` and `RadarDisplay.h` with PlatformIO support (`platformio.ini`).
+- **Live Browser Radar Scope (`docs/index.html`):** Zero-install Web Serial viewer with phosphor target trails, range rings, and live distance/speed cards.
+- **Automated Protocol Tests:** Both `arduino/HLK_LD2450.h` (C++17) and `circuitpython/ld2450.py` (Python) are unit-tested in GitHub Actions CI.
+
+---
+
+## Quick Start
+
+### Option 1: CircuitPython 9.x (Fastest)
+1. Install CircuitPython 9.x on your ESP32-S3 and copy `adafruit_ssd1306` (and optional `neopixel`) into `CIRCUITPY/lib/`.
+2. Copy [`circuitpython/code.py`](circuitpython/code.py) and [`circuitpython/ld2450.py`](circuitpython/ld2450.py) to the root of your `CIRCUITPY` drive (or run `python utils/deploy_circuitpython.py`).
+3. Edit `DISPLAY_MODE = "alien"` (`"alien"`, `"sweep"`, `"minimal"`, or `"diagnostic"`) at the top of `code.py`.
+
+### Option 2: Arduino IDE / PlatformIO
+1. Install **Adafruit SSD1306** and **Adafruit GFX Library** (or run `pio run -t upload` in `arduino/`).
+2. Open [`arduino/ESP32_Radar_Tracker.ino`](arduino/ESP32_Radar_Tracker.ino), select **ESP32-S3 Dev Module**, and upload.
+
+### Option 3: Live Web Serial Radar Scope
+Open [**eric-rolph.github.io/esp32-radar-tracker**](https://eric-rolph.github.io/esp32-radar-tracker/) in Chrome or Edge, select `115200 baud (ESP32 USB)` (or `256000 baud` for a direct USB-UART adapter on the LD2450), and click **Connect ESP32 (Web Serial)**.
+
+---
+
+## Project Structure
+
+```text
+esp32-radar-tracker/
+├── arduino/                  # Arduino C++ / PlatformIO firmware
+│   ├── ESP32_Radar_Tracker.ino
+│   ├── HLK_LD2450.h          # Sign-magnitude frame parser + 500ms stale timeout
+│   ├── RadarDisplay.h        # 128x64 OLED graphics renderer
+│   └── platformio.ini
+├── circuitpython/
+│   ├── code.py               # Unified tracker (alien / sweep / minimal / diagnostic)
+│   ├── ld2450.py             # Reusable pure-Python HLK-LD2450 parser
+│   ├── diagnostics/          # I2C scanner, raw byte & protocol debug tools
+│   └── legacy/               # Earlier standalone display experiments & notes
+├── docs/
+│   ├── index.html            # Zero-install Web Serial Live Radar Scope (GitHub Pages)
+│   └── wiring_diagram.svg    # Pinout & wiring graphic
+├── tests/
+│   ├── test_ld2450.cpp       # Native C++17 unit tests for HLK_LD2450.h
+│   └── test_ld2450.py        # Pytest suite for circuitpython/ld2450.py
+└── utils/                    # Cross-platform serial monitor & deploy utilities
+```
+
+---
+
+## HLK-LD2450 Sensor Specs
+
+| Parameter | Value |
+|---|---|
+| Operating Frequency | 24 GHz FMCW mmWave |
+| Detection Range | 0 – 6 meters |
+| Azimuth Field of View | ±60° |
+| Max Simultaneous Targets | 3 |
+| Serial Protocol | UART, **256000 baud**, 8N1 (`AA FF 03 00` … `55 CC`) |
+| Refresh Rate | ~10 Hz |
+
+## Running Tests Locally
+
+```bash
+# Python parser tests
+pytest tests/test_ld2450.py -v
+
+# C++ header tests
+g++ -std=c++17 -I tests/mocks -I arduino tests/test_ld2450.cpp -o test_ld2450 && ./test_ld2450
+```
+
+## License
+
+MIT License — see [LICENSE](LICENSE) and [NOTICE.md](NOTICE.md).

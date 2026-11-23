@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ESP32 HLK-LD2450 — Live Web Serial Radar Scope</title>
+<style>
+  :root {
+    --bg: #050d0c; --panel: #0a1816; --border: #173c35;
+    --green: #22e884; --cyan: #38bdf8; --amber: #fbbf24; --red: #f43f5e;
+    --text: #dffbf0; --muted: #7aa398;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: radial-gradient(circle at 50% 20%, #0b2420 0%, var(--bg) 65%);
+    color: var(--text); font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    min-height: 100vh; display: flex; flex-direction: column; padding: 16px; gap: 14px;
+  }
+  header {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+    gap: 12px; padding: 12px 16px; border: 1px solid var(--border); border-radius: 12px;
+    background: rgba(10, 24, 22, 0.9);
+  }
+  h1 { margin: 0; font-size: 16px; letter-spacing: 0.1em; color: var(--green); }
+  .sub { font-size: 11px; color: var(--muted); }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  select, button {
+    background: #0e2420; color: var(--text); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 12px; font: inherit; font-size: 12px; cursor: pointer;
+  }
+  button.primary { background: rgba(34,232,132,0.18); border-color: var(--green); color: var(--green); font-weight: 700; }
+  button.primary:hover { background: rgba(34,232,132,0.28); }
+  button.active { border-color: var(--cyan); color: var(--cyan); }
+  .layout { display: grid; grid-template-columns: 1fr 330px; gap: 14px; flex: 1; }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+  .panel {
+    background: rgba(10, 24, 22, 0.88); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px; display: flex; flex-direction: column; gap: 12px;
+  }
+  canvas { width: 100%; height: 100%; min-height: 440px; border-radius: 10px; background: #040a09; display: block; }
+  .card {
+    background: rgba(5, 13, 12, 0.85); border: 1px solid var(--border); border-radius: 10px; padding: 11px;
+  }
+  .card-h { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+  .kv { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; font-size: 11px; color: var(--muted); }
+  .kv b { color: var(--text); }
+  .status { font-size: 11px; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); background: #061210; }
+  .footer { text-align: center; font-size: 11px; color: var(--muted); }
+  .footer a { color: var(--green); text-decoration: none; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>HLK-LD2450 // 24GHz mmWave RADAR SCOPE</h1>
+    <div class="sub">Zero-install Web Serial viewer for ESP32-S3 Radar Tracker (raw binary LD2450 + JSON telemetry)</div>
+  </div>
+  <div class="controls">
+    <select id="baud">
+      <option value="115200">115200 baud (ESP32 USB)</option>
+      <option value="256000">256000 baud (Raw LD2450)</option>
+    </select>
+    <select id="range">
+      <option value="4000">Range: 4 m</option>
+      <option value="6000" selected>Range: 6 m</option>
+    </select>
+    <button id="btn-demo" class="active" onclick="startDemo()">Demo Mode</button>
+    <button id="btn-connect" class="primary" onclick="connectSerial()">Connect ESP32 (Web Serial)</button>
+  </div>
+</header>
+
+<div class="layout">
+  <div class="panel">
+    <canvas id="scope" width="900" height="580"></canvas>
+  </div>
+  <div class="panel">
+    <div class="status" id="status-box">MODE: SIMULATED DEMO — plug in ESP32-S3 &amp; click Connect for live radar</div>
+    <div id="target-cards"></div>
+    <div class="card">
+      <div class="card-h"><span>SENSOR SPECS</span><span style="color:var(--green)">24 GHz FMCW</span></div>
+      <div class="kv">
+        <span>Field of View</span><b>&plusmn;60&deg; Azimuth</b>
+        <span>Max Targets</span><b>3 Simultaneous</b>
+        <span>Update Rate</span><b>~10 Hz</b>
+        <span>Protocol</span><b>AA FF 03 00 .. 55 CC</b>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <a href="https://github.com/eric-rolph/esp32-radar-tracker">github.com/eric-rolph/esp32-radar-tracker</a> &middot; MIT License
+</div>
+
+<script>
+const COLORS = ['#22e884', '#38bdf8', '#fbbf24'];
+const cv = document.getElementById('scope');
+const ctx = cv.getContext('2d');
+let mode = 'demo';
+let port = null, reader = null, runningSerial = false;
+let targets = [];
+const trails = [[], [], []];
+let sweepAngle = -60, sweepDir = 1;
+
+function decodeSigned16(lo, hi) {
+  const raw = (hi << 8) | lo;
+  if (raw & 0x8000) return raw - 0x8000;
+  return raw === 0 ? 0 : -raw;
+}
+
+function updateTargets(list) {
+  targets = list.slice(0, 3);
+  for (let i = 0; i < 3; i++) {
+    const t = targets[i];
+    if (t) {
+      trails[i].push({ x: t.x_mm, y: t.y_mm, ts: performance.now() });
+      if (trails[i].length > 26) trails[i].shift();
+    } else if (trails[i].length && performance.now() - trails[i][trails[i].length - 1].ts > 1200) {
+      trails[i].length = 0;
+    }
+  }
+  renderCards();
+}
+
+function renderCards() {
+  const host = document.getElementById('target-cards');
+  host.innerHTML = [0, 1, 2].map(i => {
+    const t = targets[i];
+    const col = COLORS[i];
+    if (!t) {
+      return `<div class="card" style="opacity:0.45"><div class="card-h"><span style="color:${col}">TARGET ${i + 1}</span><span>NO SIGNAL</span></div></div>`;
+    }
+    const dist = (Math.hypot(t.x_mm, t.y_mm) / 1000).toFixed(2);
+    const ang = (Math.atan2(t.x_mm, t.y_mm) * 180 / Math.PI).toFixed(1);
+    const moving = t.speed_cm_s > 5 ? 'RECEDING' : (t.speed_cm_s < -5 ? 'APPROACHING' : 'STATIC');
+    return `<div class="card" style="border-color:${col}66">
+      <div class="card-h"><span style="color:${col}">● TARGET ${i + 1}</span><span>${moving}</span></div>
+      <div class="kv">
+        <span>Distance</span><b>${dist} m</b>
+        <span>Angle</span><b>${ang}&deg;</b>
+        <span>Position</span><b>(${t.x_mm}, ${t.y_mm}) mm</b>
+        <span>Speed</span><b>${t.speed_cm_s >= 0 ? '+' : ''}${t.speed_cm_s} cm/s</b>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function startDemo() {
+  disconnectSerial();
+  mode = 'demo';
+  document.getElementById('btn-demo').classList.add('active');
+  document.getElementById('status-box').textContent = 'MODE: SIMULATED DEMO — 3 moving targets in +/-60 deg cone';
+}
+
+async function disconnectSerial() {
+  runningSerial = false;
+  try { if (reader) await reader.cancel(); } catch {}
+  try { if (port) await port.close(); } catch {}
+  reader = null; port = null;
+}
+
+async function connectSerial() {
+  if (!('serial' in navigator)) {
+    document.getElementById('status-box').textContent = 'Web Serial API requires Chrome, Edge, or Opera on desktop.';
+    return;
+  }
+  await disconnectSerial();
+  try {
+    port = await navigator.serial.requestPort();
+    const baudRate = Number(document.getElementById('baud').value);
+    await port.open({ baudRate });
+    mode = 'serial';
+    runningSerial = true;
+    document.getElementById('btn-demo').classList.remove('active');
+    document.getElementById('status-box').textContent = `CONNECTED (${baudRate} baud) — streaming live HLK-LD2450 data`;
+
+    reader = port.readable.getReader();
+    let binBuf = [];
+    let textBuf = '';
+    const dec = new TextDecoder();
+
+    while (runningSerial) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      if (!value) continue;
+
+      // 1. Raw binary LD2450 frame scanner (AA FF 03 00 ... 55 CC)
+      for (let i = 0; i < value.length; i++) binBuf.push(value[i]);
+      if (binBuf.length > 512) binBuf = binBuf.slice(-256);
+      while (binBuf.length >= 30) {
+        const idx = binBuf.findIndex((b, k) =>
+          k <= binBuf.length - 4 && b === 0xAA && binBuf[k + 1] === 0xFF && binBuf[k + 2] === 0x03 && binBuf[k + 3] === 0x00
+        );
+        if (idx < 0) { binBuf = binBuf.slice(-3); break; }
+        if (idx > 0) binBuf = binBuf.slice(idx);
+        if (binBuf.length < 30) break;
+        if (binBuf[28] === 0x55 && binBuf[29] === 0xCC) {
+          const parsed = [];
+          for (let t = 0; t < 3; t++) {
+            const o = 4 + t * 8;
+            const x = decodeSigned16(binBuf[o], binBuf[o + 1]);
+            const y = decodeSigned16(binBuf[o + 2], binBuf[o + 3]);
+            const spd = decodeSigned16(binBuf[o + 4], binBuf[o + 5]);
+            if (x !== 0 || y !== 0) parsed.push({ x_mm: x, y_mm: y, speed_cm_s: spd });
+          }
+          updateTargets(parsed);
+          binBuf = binBuf.slice(30);
+        } else {
+          binBuf = binBuf.slice(1);
+        }
+      }
+
+      // 2. JSON telemetry line parser from CircuitPython code.py: {"ld2450":[[x,y,spd,dist],...]}
+      textBuf += dec.decode(value, { stream: true });
+      const lines = textBuf.split(/\r?\n/);
+      textBuf = lines.pop() || '';
+      for (const ln of lines) {
+        if (ln.includes('"ld2450"')) {
+          try {
+            const j = JSON.parse(ln.slice(ln.indexOf('{')));
+            if (Array.isArray(j.ld2450)) {
+              updateTargets(j.ld2450.map(([x, y, spd]) => ({ x_mm: x, y_mm: y, speed_cm_s: spd })));
+            }
+          } catch {}
+        }
+      }
+    }
+  } catch (err) {
+    document.getElementById('status-box').textContent = `Serial disconnected: ${err.message || err}`;
+  }
+}
+
+function drawScope(now) {
+  requestAnimationFrame(drawScope);
+  const maxMm = Number(document.getElementById('range').value);
+
+  if (mode === 'demo') {
+    const t = now / 1000;
+    updateTargets([
+      { x_mm: Math.round(Math.sin(t * 0.55) * 1450), y_mm: Math.round(2200 + Math.cos(t * 0.42) * 900), speed_cm_s: Math.round(-Math.sin(t * 0.42) * 38) },
+      { x_mm: Math.round(-900 + Math.cos(t * 0.31) * 1100), y_mm: Math.round(3700 + Math.sin(t * 0.28) * 700), speed_cm_s: Math.round(Math.cos(t * 0.28) * 20) },
+      { x_mm: Math.round(1150 + Math.sin(t * 0.22) * 500), y_mm: Math.round(4550 + Math.cos(t * 0.25) * 450), speed_cm_s: Math.round(-Math.sin(t * 0.25) * 11) },
+    ]);
+  }
+
+  const w = cv.width, h = cv.height;
+  const cx = w / 2, cy = h - 42;
+  const R = Math.min(w * 0.44, h - 84);
+  ctx.clearRect(0, 0, w, h);
+
+  // Subtle glow cone
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.arc(cx, cy, R, -Math.PI * 5 / 6, -Math.PI / 6);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(34, 232, 132, 0.045)';
+  ctx.fill();
+
+  // Range arcs (1m..max)
+  const rings = maxMm / 1000;
+  for (let m = 1; m <= rings; m++) {
+    const r = (m / rings) * R;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, -Math.PI * 5 / 6, -Math.PI / 6);
+    ctx.strokeStyle = m === rings ? 'rgba(34,232,132,0.48)' : 'rgba(34,232,132,0.22)';
+    ctx.lineWidth = m === rings ? 2 : 1;
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(122,163,152,0.85)';
+    ctx.font = '12px monospace';
+    ctx.fillText(`${m}m`, cx + 6, cy - r + 14);
+  }
+
+  // Azimuth rays (-60, -30, 0, +30, +60)
+  for (const deg of [-60, -30, 0, 30, 60]) {
+    const rad = (deg - 90) * Math.PI / 180;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + R * Math.cos(rad), cy + R * Math.sin(rad));
+    ctx.strokeStyle = Math.abs(deg) === 60 ? 'rgba(34,232,132,0.5)' : 'rgba(34,232,132,0.16)';
+    ctx.lineWidth = Math.abs(deg) === 60 ? 2 : 1;
+    ctx.stroke();
+  }
+
+  // Animated sweep beam
+  sweepAngle += sweepDir * 1.15;
+  if (sweepAngle >= 60) sweepDir = -1;
+  if (sweepAngle <= -60) sweepDir = 1;
+  const sRad = (sweepAngle - 90) * Math.PI / 180;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.arc(cx, cy, R, sRad - sweepDir * 0.16, sRad, sweepDir < 0);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(34, 232, 132, 0.14)';
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(cx + R * Math.cos(sRad), cy + R * Math.sin(sRad));
+  ctx.strokeStyle = 'rgba(140, 255, 200, 0.85)';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  // Trails & target blips
+  for (let i = 0; i < 3; i++) {
+    const col = COLORS[i];
+    const tr = trails[i];
+    tr.forEach((pt, idx) => {
+      const px = cx + (pt.x / maxMm) * R;
+      const py = cy - (pt.y / maxMm) * R;
+      ctx.beginPath();
+      ctx.arc(px, py, 3, 0, Math.PI * 2);
+      ctx.fillStyle = col + Math.round((idx / tr.length) * 140).toString(16).padStart(2, '0');
+      ctx.fill();
+    });
+    const t = targets[i];
+    if (!t) continue;
+    const px = cx + (t.x_mm / maxMm) * R;
+    const py = cy - (t.y_mm / maxMm) * R;
+    ctx.beginPath(); ctx.arc(px, py, 16, 0, Math.PI * 2); ctx.fillStyle = col + '33'; ctx.fill();
+    ctx.beginPath(); ctx.arc(px, py, 7, 0, Math.PI * 2); ctx.fillStyle = col; ctx.fill();
+    ctx.fillStyle = '#ecfdf5'; ctx.font = 'bold 12px monospace';
+    ctx.fillText(`T${i + 1} ${(Math.hypot(t.x_mm, t.y_mm) / 1000).toFixed(2)}m`, px + 12, py - 8);
+  }
+  ctx.restore();
+}
+requestAnimationFrame(drawScope);
+</script>
+</body>
+</html>

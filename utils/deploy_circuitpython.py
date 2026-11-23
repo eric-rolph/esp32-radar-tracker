@@ -139,9 +139,9 @@ def main():
             print("\n\nCancelled")
             return 0
     
-    # Get COM port
-    port = input("\nEnter COM port (e.g., COM5): ").strip().upper()
-    if not port.startswith("COM"):
+    # Get serial port (supports Windows COM5, Linux /dev/ttyACM0, macOS /dev/cu.usbmodem*)
+    port = input("\nEnter serial port (e.g., COM5 or /dev/ttyACM0): ").strip()
+    if port.isdigit():
         port = "COM" + port
     
     # Get monitoring duration

@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  protocol-tests:
+    name: C++ HLK_LD2450 & CircuitPython Parser Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile & run C++ HLK_LD2450.h unit tests
+        run: |
+          g++ -std=c++17 -Wall -Wextra -I tests/mocks -I arduino tests/test_ld2450.cpp -o test_ld2450
+          ./test_ld2450
+      - name: Run Python ld2450 parser unit tests
+        run: |
+          pip install pytest
+          pytest tests/test_ld2450.py -v

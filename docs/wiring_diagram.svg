@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 340" width="880" height="340" font-family="ui-monospace, Consolas, monospace">
+  <rect width="880" height="340" rx="14" fill="#081312"/>
+  <rect x="10" y="10" width="860" height="320" rx="10" fill="none" stroke="#183f37" stroke-width="1.5"/>
+  <text x="440" y="38" fill="#22e884" font-size="15" font-weight="bold" text-anchor="middle" letter-spacing="1.5">ESP32-S3 + HLK-LD2450 24GHz RADAR + SSD1306 OLED WIRING</text>
+
+  <!-- HLK-LD2450 Module -->
+  <rect x="38" y="82" width="210" height="196" rx="10" fill="#0e2220" stroke="#22e884" stroke-width="2"/>
+  <text x="143" y="108" fill="#ecfdf5" font-size="14" font-weight="bold" text-anchor="middle">HLK-LD2450</text>
+  <text x="143" y="126" fill="#7aa398" font-size="11" text-anchor="middle">24GHz mmWave (256000 baud)</text>
+  <text x="234" y="162" fill="#f43f5e" font-size="12" font-weight="bold" text-anchor="end">VCC (5V)</text>
+  <text x="234" y="194" fill="#94a3b8" font-size="12" font-weight="bold" text-anchor="end">GND</text>
+  <text x="234" y="226" fill="#38bdf8" font-size="12" font-weight="bold" text-anchor="end">TX</text>
+  <text x="234" y="258" fill="#fbbf24" font-size="12" font-weight="bold" text-anchor="end">RX</text>
+
+  <!-- ESP32-S3 ProS3 Board -->
+  <rect x="330" y="68" width="220" height="224" rx="10" fill="#0f1d2e" stroke="#38bdf8" stroke-width="2"/>
+  <text x="440" y="96" fill="#f8fafc" font-size="15" font-weight="bold" text-anchor="middle">ESP32-S3 (ProS3)</text>
+  <text x="440" y="114" fill="#94a3b8" font-size="11" text-anchor="middle">Arduino C++ / CircuitPython 9.x</text>
+  <text x="344" y="162" fill="#f43f5e" font-size="12" font-weight="bold">5V</text>
+  <text x="344" y="194" fill="#94a3b8" font-size="12" font-weight="bold">GND</text>
+  <text x="344" y="226" fill="#38bdf8" font-size="12" font-weight="bold">GPIO 44 (RX)</text>
+  <text x="344" y="258" fill="#fbbf24" font-size="12" font-weight="bold">GPIO 43 (TX)</text>
+
+  <text x="536" y="162" fill="#fb7185" font-size="12" font-weight="bold" text-anchor="end">3.3V</text>
+  <text x="536" y="194" fill="#94a3b8" font-size="12" font-weight="bold" text-anchor="end">GND</text>
+  <text x="536" y="226" fill="#a78bfa" font-size="12" font-weight="bold" text-anchor="end">GPIO 8 (SDA)</text>
+  <text x="536" y="258" fill="#34d399" font-size="12" font-weight="bold" text-anchor="end">GPIO 9 (SCL)</text>
+
+  <!-- SSD1306 OLED -->
+  <rect x="632" y="82" width="210" height="196" rx="10" fill="#17142b" stroke="#a78bfa" stroke-width="2"/>
+  <text x="737" y="108" fill="#f8fafc" font-size="14" font-weight="bold" text-anchor="middle">SSD1306 OLED</text>
+  <text x="737" y="126" fill="#94a3b8" font-size="11" text-anchor="middle">128x64 I2C (0x3D / 0x3C)</text>
+  <text x="646" y="162" fill="#fb7185" font-size="12" font-weight="bold">VCC (3.3V)</text>
+  <text x="646" y="194" fill="#94a3b8" font-size="12" font-weight="bold">GND</text>
+  <text x="646" y="226" fill="#a78bfa" font-size="12" font-weight="bold">SDA</text>
+  <text x="646" y="258" fill="#34d399" font-size="12" font-weight="bold">SCL</text>
+
+  <!-- Radar <-> ESP32 Wires -->
+  <line x1="248" y1="158" x2="330" y2="158" stroke="#f43f5e" stroke-width="3"/>
+  <line x1="248" y1="190" x2="330" y2="190" stroke="#64748b" stroke-width="3"/>
+  <line x1="248" y1="222" x2="330" y2="222" stroke="#38bdf8" stroke-width="3"/>
+  <line x1="248" y1="254" x2="330" y2="254" stroke="#fbbf24" stroke-width="3"/>
+
+  <!-- ESP32 <-> OLED Wires -->
+  <line x1="550" y1="158" x2="632" y2="158" stroke="#fb7185" stroke-width="3"/>
+  <line x1="550" y1="190" x2="632" y2="190" stroke="#64748b" stroke-width="3"/>
+  <line x1="550" y1="222" x2="632" y2="222" stroke="#a78bfa" stroke-width="3"/>
+  <line x1="550" y1="254" x2="632" y2="254" stroke="#34d399" stroke-width="3"/>
+
+  <text x="440" y="316" fill="#7aa398" font-size="11" text-anchor="middle">USB-C connects ESP32-S3 to host PC for flashing &amp; live Web Serial Radar Scope telemetry</text>
+</svg>
